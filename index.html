@@ -243,8 +243,13 @@ a:hover{text-decoration:underline}
 .gh-l{flex:0 0 var(--lab);padding:8px 4px;font-size:11.5px;font-weight:600;
   color:var(--muted48);position:sticky;left:0;z-index:10;background:var(--canvas)}
 .gh-r{flex:1 1 auto}
-.gm{font-size:11.5px;font-weight:600;color:var(--muted48);text-align:center;padding:4px 0 2px}
+/* 월 머리글: 색 띠로 구획을 나눕니다 (홀수달과 짝수달 톤 차이) */
+.gm{font-size:12px;font-weight:700;color:var(--ink);text-align:center;padding:6px 0 5px;
+  background:#e9edf3;border-left:2px solid var(--ink);letter-spacing:-0.2px}
+.gm.alt{background:#f4f6f9}
+.gm:first-child{border-left:0}
 .gw{text-align:center;padding:3px 0 7px;color:var(--muted48)}
+.gw.ms{border-left:2px solid var(--ink)}
 .gw b{display:block;font-size:11px;font-weight:600;color:var(--muted80)}
 .gw i{display:block;font-style:normal;font-size:9px;margin-top:1px;letter-spacing:-0.4px}
 .gr{display:flex;border-bottom:1px solid var(--divider);background:var(--canvas)}
@@ -263,7 +268,8 @@ a:hover{text-decoration:underline}
 .gc{flex:1 1 auto;display:grid;position:relative;min-height:33px}
 .gr.grp .gc{min-height:37px}
 .gc>u{border-left:1px solid var(--divider);text-decoration:none}
-.gc>u.ms{border-left:1px solid var(--hairline)}
+.gc>u.ms{border-left:2px solid #b9c2ce}
+.gr.grp .gc>u.ms{border-left-color:#98a4b3}
 .gb{position:absolute;height:11px;top:50%;transform:translateY(-50%);border-radius:6px}
 .gb.p{background:var(--pkg)}   .gb.p.todo{background:var(--pkg-t)}
 .gb.d{background:var(--dev)}   .gb.d.todo{background:var(--dev-t)}
@@ -417,9 +423,9 @@ table.t{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}
    비밀번호를 모르면 소스를 봐도 시트 주소를 알 수 없습니다.
    바꾸려면  python sheetlock.py <비밀번호> <시트ID>  로 다시 만들어 붙여넣으세요. */
 const SHEET_ENC = {
-  salt: 'D4GrLWhRZX3poj1MNFPLbQ==',
-  iv:   'PPupYwQjTsEIBdhR',
-  ct:   '3+z4xLdlKIBPMgh4jXhDAaz26Um3pzEG9cBOpr2JNdE0g6+zsg5xPWFwCL9FAHy3gNKSrpMgNSKIwwQU',
+  salt: 'g9s6Ina7eDmObCJc2vKcNA==',
+  iv:   'VBf9T3H67F0ktb0a',
+  ct:   'UM9pxVSA8hNQzrZXC91+UWvQ4e6NmvPEzjAnQKvqmh4vqCPOsVbsLjAx8C2/nNdZAJIBxS9LsenOgsi6',
   iter: 200000
 };
 var SHEET_ID = '';   /* 비밀번호를 맞히면 이 자리에 채워집니다 */
@@ -764,10 +770,14 @@ function render(DATA, srcLabel){
     runs.push(run);
     var h='<div class="gh"><div class="gh-l">단계 및 작업</div><div class="gh-r">';
     h+='<div style="display:grid;grid-template-columns:'+runs.map(function(r){return r+'fr';}).join(' ')+'">';
-    var idx=0; runs.forEach(function(r){ h+='<div class="gm">'+(weeks[idx].s.getMonth()+1)+'월</div>'; idx+=r; });
+    var idx=0, mi=0;
+    runs.forEach(function(r){
+      h+='<div class="gm'+(mi%2?' alt':'')+'">'+(weeks[idx].s.getMonth()+1)+'월</div>';
+      idx+=r; mi++;
+    });
     h+='</div><div style="display:grid;grid-template-columns:'+cols+'">';
     weeks.forEach(function(w,i){
-      h+='<div class="gw'+((i+1)===curWeek?' now':'')+'" title="'+(i+1)+'주차 '+md(w.s)+'~'+md(w.e)+'">'
+      h+='<div class="gw'+((i+1)===curWeek?' now':'')+(ms[i]?' ms':'')+'" title="'+(i+1)+'주차 '+md(w.s)+'~'+md(w.e)+'">'
         +'<b>'+(i+1)+'</b><i>'+md(w.s)+'</i></div>'; });
     h+='</div></div></div>';
 
