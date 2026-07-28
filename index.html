@@ -211,7 +211,10 @@ a:hover{text-decoration:underline}
 .gs{overflow:auto;max-height:600px;position:relative;
   border:1px solid var(--divider);border-radius:12px}
 .gantt{min-width:1010px;font-size:13px}
-.gh{position:sticky;top:0;z-index:8;background:var(--canvas)}
+.ghead{position:sticky;top:0;z-index:8;background:var(--canvas);padding-top:26px}
+.nowtag{position:absolute;top:2px;transform:translateX(-50%);z-index:9;
+  background:var(--ink);color:#fff;font-size:10.5px;font-weight:600;padding:3px 9px;
+  border-radius:9999px;white-space:nowrap;letter-spacing:-0.2px}
 .gr.live{background:#EAF2FD}
 .gr.grp.live{background:#DCEAFB}
 .gr.live .gn .nm{font-weight:600}
@@ -230,7 +233,8 @@ a:hover{text-decoration:underline}
   color:var(--primary);cursor:pointer;margin-left:auto}
 .jump:hover{background:#e8f1fc}
 .ch .m + .jump{margin-left:12px}
-.gh{display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid var(--ink)}
+.gh{display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid var(--ink);
+  background:var(--canvas)}
 .gh-l{padding:8px 4px;font-size:11.5px;font-weight:600;color:var(--muted48);
   position:sticky;left:0;z-index:10;background:var(--canvas)}
 .gh-r{display:grid}
@@ -253,12 +257,9 @@ a:hover{text-decoration:underline}
 .gb.p{background:var(--pkg)}   .gb.p.todo{background:var(--pkg-t)}
 .gb.d{background:var(--dev)}   .gb.d.todo{background:var(--dev-t)}
 .gb.g{background:var(--band);height:16px;border-radius:8px}
-.gwrap{position:relative;padding-top:28px}
-.nowl{position:absolute;top:28px;bottom:0;width:2px;background:var(--ink);z-index:6;
+.gwrap{position:relative}
+.nowl{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);z-index:6;
   pointer-events:none;box-shadow:0 0 0 1.5px rgba(255,255,255,.9)}
-.nowl::before{content:attr(data-l);position:absolute;top:-24px;left:50%;transform:translateX(-50%);
-  background:var(--ink);color:#fff;font-size:10.5px;font-weight:600;padding:3px 9px;
-  border-radius:9999px;white-space:nowrap;letter-spacing:-0.2px}
 .gw.now b,.gw.now i{color:var(--ink)}
 .gw.now b{font-weight:700}
 
@@ -337,12 +338,13 @@ table.t{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}
 
    ② SHEET_ID 가 비어 있거나 시트를 못 읽으면 아래 FALLBACK 값을 씁니다.
    ════════════════════════════════════════════════════════════════ */
-const SHEET_ID = '1ecQCNsgSeez1qDqXvXIm66vas9PUWNKyB0Rxa-wfZyY';
+const SHEET_ID = '1Oa8GCh0u1D16qrvNAKrLF1cFR2o_RXZZCpbCGWbTIi0';
 
 const TABS = { 설정:'설정', WBS:'WBS', 마일스톤:'마일스톤',
                주간업무:'주간업무', 녹화본:'녹화본', 산출물:'산출물', 이슈:'이슈' };
 
 const FALLBACK = {
+
 
   project: {
     name:'JaDE 인사시스템 구축', client:'BYN', vendor:'휴먼컨설팅그룹',
@@ -467,21 +469,6 @@ const FALLBACK = {
   // week : 주차 번호 (0 = 착수 전)
   // done = 금주 실적 / next = 차주 계획 / req = 요청사항
   weekly: [
-    { week:0, period:'2026.07.27 ~ 08.02', title:'착수 준비',
-      done:[
-        '추가개발 상세분석 사전질의서 배포 (회신 요청일 08.10)',
-        'WBS 초안 작성, 전체 24주 및 추가개발 4단계 확정',
-        '공수산정내역서 REV1.2 기준 개발범위 검산 완료',
-      ],
-      next:[
-        '킥오프 미팅 및 수행계획서 확정',
-        '개발서버 설정 및 접속정보 공유',
-        '공통코드, 조직 기초데이터 양식 배포',
-      ],
-      req:[
-        '사전질의서 <b>08.10까지 회신</b> 요청. 지연 시 설계 구간이 압축됩니다.',
-        'C섹션(전표 인터페이스) 우선 회신 필요',
-      ] },
     { week:1, period:'2026.08.03 ~ 08.09', title:'킥오프 및 환경 구성',
       done:[
         '킥오프 미팅 진행, 수행계획서 확정',
@@ -557,7 +544,7 @@ const FALLBACK = {
       <i></i>
       <img src="" alt="HCG" id="gate-hcg">
     </div>
-    <h1>JaDE 인사시스템 구축</h1>
+    <h1 id="gate-name">JaDE 인사시스템 구축</h1>
     <p class="gs-sub">열람 비밀번호를 입력해 주세요</p>
     <div class="gate-form">
       <input type="password" id="gate-pw" placeholder="비밀번호" autocomplete="off" aria-label="열람 비밀번호">
@@ -587,7 +574,7 @@ const FALLBACK = {
   <div class="wrap">
     <div class="title-main">
       <p class="eyebrow">프로젝트 현황</p>
-      <h1>JaDE 인사시스템 구축</h1>
+      <h1 id="proj-name">JaDE 인사시스템 구축</h1>
       <p class="sub" id="sub"></p>
     </div>
     <dl class="specs" id="specs"></dl>
@@ -685,8 +672,7 @@ const FALLBACK = {
 
 <footer class="foot">
   <div class="wrap">
-    <span>휴먼컨설팅그룹 / JaDE 인사시스템 구축</span>
-    <span id="foot-r"></span>
+    <span id="foot-l">휴먼컨설팅그룹 / JaDE 인사시스템 구축</span>
   </div>
 </footer>
 
@@ -718,9 +704,10 @@ function render(DATA, srcLabel){
   function prog(a){ var n=0,t=0; a.forEach(function(i){ var w=span(i); t+=w; n+=w*WT[i.st]; }); return t?n/t:0; }
 
   var pkgItems=[]; DATA.pkg.forEach(function(g){ pkgItems=pkgItems.concat(g.items); });
-  var pPkg=prog(pkgItems);
+  var pPkg=(typeof DATA.pctPkg==='number') ? DATA.pctPkg : prog(pkgItems);
   var pDev=(typeof DATA.devPct==='number') ? DATA.devPct : prog(DATA.dev);
-  var pAll=pPkg*DATA.weights.pkg+pDev*DATA.weights.dev;
+  var pAll=(typeof DATA.pctAll==='number') ? DATA.pctAll
+         : (pPkg*DATA.weights.pkg+pDev*DATA.weights.dev);
   var pc=function(v){ return Math.round(v*100); };
 
   /* 헤더 */
@@ -729,6 +716,9 @@ function render(DATA, srcLabel){
   if(today<START){ dd.className='tag blue'; dd.textContent='착수 D-'+Math.ceil((START-today)/DAY); }
   else if(OPEN>today){ dd.className='tag blue'; dd.textContent='오픈 D-'+Math.ceil((OPEN-today)/DAY); }
   else { dd.className='tag grey'; dd.textContent='오픈 완료'; }
+  if($('proj-name')) $('proj-name').textContent=P.name;
+  if($('foot-l'))    $('foot-l').textContent=P.vendor+' / '+P.name;
+  try{ document.title=P.name+' / 프로젝트 현황'; }catch(e){}
   $('sub').textContent=P.vendor+' 수행 / '+P.solution+' / 전체 '+NW+'주';
   $('specs').innerHTML=[
     ['수행 기간', ymd(START)+' - '+ymd(END)],
@@ -736,7 +726,6 @@ function render(DATA, srcLabel){
     ['오픈 예정', ymd(OPEN)],
     ['추가개발', P.devMD+' M/D ('+P.devCount+'건)']
   ].map(function(r){ return '<div class="spec"><dt>'+r[0]+'</dt><dd>'+r[1]+'</dd></div>'; }).join('');
-  $('foot-r').textContent='기준일 '+ymd(today);
 
   /* 월별 진행 맵 */
   (function(){
@@ -878,10 +867,14 @@ function render(DATA, srcLabel){
     if(today>=START && today<=new Date(+START+NW*7*DAY-1)){
       nl = Math.min(1, Math.max(0, (today-START)/DAY / (NW*7)));
     }
-    $('gantt').innerHTML='<div class="gwrap">'+h+rows
-      +(nl!==null
-        ? '<div class="nowl" data-l="오늘 '+md(today)+'" style="left:calc(200px + (100% - 200px) * '+nl+')"></div>'
-        : '')
+    var lpos = nl!==null ? 'left:calc(200px + (100% - 200px) * '+nl+')' : '';
+    $('gantt').innerHTML='<div class="gwrap">'
+      +'<div class="ghead">'
+        +(nl!==null ? '<span class="nowtag" style="'+lpos+'">오늘 '+md(today)+'</span>' : '')
+        +h
+      +'</div>'
+      +rows
+      +(nl!==null ? '<div class="nowl" style="'+lpos+'"></div>' : '')
       +'</div>';
     $('g-m').textContent=ymd(START)+' ~ '+ymd(END)+', 총 '+NW+'주';
 
@@ -939,7 +932,6 @@ function render(DATA, srcLabel){
 
     /* 1~24주차를 전부 만들고, 데이터가 있는 주차만 채웁니다 */
     var full=[];
-    if(byWk[0]) full.push(byWk[0]);
     for(var i=1;i<=NW;i++){
       full.push(byWk[i] || { week:i, title:'',
         period: ymd(weeks[i-1].s)+' ~ '+md(weeks[i-1].e), done:[], next:[], req:[] });
@@ -954,7 +946,14 @@ function render(DATA, srcLabel){
     };
 
     /* 기본값: 오늘 주차 */
-    var def = (curWeek>0 ? curWeek : (byWk[0] ? 0 : 1));
+    /* 오늘 주차에 내용이 있으면 그 주차, 없으면 작성된 주차 중 가장 최근 것 */
+    var cw = curWeek>0 ? Math.min(curWeek, NW) : 1;
+    var def = cw;
+    if(!has(full[cw-1] || {})){
+      var back=written.filter(function(w){ return w.week<=cw; })
+                      .sort(function(a,b){ return b.week-a.week; });
+      if(back.length) def=back[0].week;
+    }
 
     /* 목록: 최신 주차부터, 착수 전은 맨 아래 */
     var picker=full.slice().sort(function(a,b){ return a.week-b.week; });
@@ -1037,14 +1036,16 @@ function render(DATA, srcLabel){
     var rows='';
     order.forEach(function(mod){
       byMod[mod].forEach(function(r,k){
-        var dt=parse(r.date);
-        var link = r.url ? '<a href="'+r.url+'" target="_blank" rel="noopener">'+r.title+'</a>'
-                         : '<span class="mn">'+r.title+'</span>';
+        var dt=r.date?parse(r.date):null;
+        var dtxt = dt ? '<b style="color:var(--ink)">'+ymd(dt)+'</b>('+DOW[dt.getDay()]+')' : '—';
+        var nmTxt = r.title || '(제목 없음)';
+        var link = r.url ? '<a href="'+r.url+'" target="_blank" rel="noopener">'+nmTxt+'</a>'
+                         : '<span class="mn">'+nmTxt+'</span>';
         var st = r.url ? '<span class="tag blue">등록</span>' : '<span class="tag line">예정</span>';
         rows+='<tr>'
           +(k===0?'<td class="grp" rowspan="'+byMod[mod].length+'"><span class="rmod '
                   +(MC[mod]||'m-sys')+'">'+mod+'</span></td>':'')
-          +'<td class="mn"><b style="color:var(--ink)">'+ymd(dt)+'</b>('+DOW[dt.getDay()]+')</td>'
+          +'<td class="mn">'+dtxt+'</td>'
           +'<td class="mn">'+r.topic+'</td>'
           +'<td class="mn">'+((r.who&&r.who.length)?r.who.join('<br>'):'—')+'</td>'
           +'<td>'+link+'</td><td>'+st+'</td></tr>';
@@ -1100,6 +1101,10 @@ function render(DATA, srcLabel){
   if(location.hash && $(location.hash.slice(1))) show(location.hash.slice(1));
 
   if(window.console && console.info){ console.info('[현황판] '+srcLabel.text+(srcLabel.tip?' — '+srcLabel.tip:'')); }
+
+  /* 화면이 완성된 다음에 잠금을 내립니다 */
+  var _g=document.getElementById('gate');
+  if(_g) _g.className='off';
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1154,9 +1159,21 @@ function bootBoard(){
            '배포':'done','작성중':'doing' };
   var st=function(v){ return ST[String(v).trim()] || 'todo'; };
   var nd=function(v){
-    var m=String(v).trim().replace(/[.\/]/g,'-').match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if(!m) return '';
-    return m[1]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[3]).slice(-2);
+    var s=String(v==null?'':v).trim();
+    if(!s) return '';
+    var p2=function(x){ return ('0'+x).slice(-2); };
+    /* 구글이 Date(2026,7,17) 형태로 내보내는 경우 (월이 0부터) */
+    var g=s.match(/^Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/);
+    if(g) return g[1]+'-'+p2(+g[2]+1)+'-'+p2(g[3]);
+    /* 공백을 걷어내고 구분자를 통일 */
+    var t=s.replace(/\s+/g,'').replace(/[.\/]/g,'-').replace(/-+$/,'');
+    var m=t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);          /* 2026-08-17, 2026.8.17 */
+    if(m) return m[1]+'-'+p2(m[2])+'-'+p2(m[3]);
+    m=t.match(/^(\d{1,2})-(\d{1,2})-(\d{4})/);              /* 8-17-2026 */
+    if(m) return m[3]+'-'+p2(m[1])+'-'+p2(m[2]);
+    m=t.match(/^(\d{4})(\d{2})(\d{2})$/);                   /* 20260817 */
+    if(m) return m[1]+'-'+m[2]+'-'+m[3];
+    return '';
   };
   var n=function(v,d){ var x=parseFloat(String(v).replace(/[^0-9.\-]/g,'')); return isNaN(x)?d:x; };
 
@@ -1179,6 +1196,16 @@ function bootBoard(){
       if(cfg['가중치_추가개발']) D.weights.dev=n(cfg['가중치_추가개발'],D.weights.dev);
       D.previewDate = nd(cfg['미리보기기준일']) || null;
       if(cfg['이슈요약']) D.issueSummary=cfg['이슈요약'];
+      var pctCfg=function(v){
+        var x=String(v==null?'':v).replace('%','').trim();
+        if(x==='') return null;
+        var f=parseFloat(x); if(isNaN(f)) return null;
+        return Math.max(0, Math.min(1, f>1 ? f/100 : f));
+      };
+      var a1=pctCfg(cfg['진척률_전체']), a2=pctCfg(cfg['진척률_패키지']), a3=pctCfg(cfg['진척률_추가개발']);
+      if(a1!==null) D.pctAll=a1;
+      if(a2!==null) D.pctPkg=a2;
+      if(a3!==null) D.devPct=a3;
       used.push('설정');
     }
 
@@ -1265,10 +1292,14 @@ function bootBoard(){
 
     if(t['녹화본'] && t['녹화본'].length){
       var rec=t['녹화본'].map(function(r){
-        return { mod:r['모듈']||'기타', date:nd(r['일자']), topic:r['내용']||'사용자 교육',
+        return { mod:String(r['모듈']||'').trim()||'기타',
+                 date:nd(r['일자']),
+                 topic:String(r['내용']||'').trim()||'사용자 교육',
                  who:String(r['참여자']||'').split(/[,;\n]/).map(function(x){return x.trim();}).filter(Boolean),
-                 title:r['제목']||'', url:r['링크']||'' };
-      }).filter(function(x){ return x.date && x.title; });
+                 title:String(r['제목']||'').trim(),
+                 url:String(r['링크']||'').trim() };
+      /* 제목 / 링크 / 일자 중 하나라도 있으면 살립니다 */
+      }).filter(function(x){ return x.title || x.url || x.date; });
       if(rec.length){ D.recordings=rec; used.push('녹화본'); }
     }
 
@@ -1319,8 +1350,8 @@ function bootBoard(){
    ══════════════════════════════════════════════════════════════ */
 (function(){
   'use strict';
-  var SHA    = 'd8588489e4606f1471096ed8579c37c58a2c3480591465b907c90bd07b0f7f1c';
-  var SIMPLE = -1317198535;
+  var SHA    = 'b0869a939599458b3959c832ada94bd9733421f25782d3b920f4c673deb9cb3d';
+  var SIMPLE = -1649614439;
   /* 통과 기록을 남기지 않습니다. 새로고침하거나 다시 들어오면 매번 다시 묻습니다. */
 
   var gate=document.getElementById('gate');
@@ -1347,8 +1378,10 @@ function bootBoard(){
   var started=false;
   function open_(){
     if(started) return; started=true;
-    if(gate) gate.className='off';
-    bootBoard();
+    if(msg){ msg.style.color='var(--muted48)'; msg.textContent='불러오는 중입니다'; }
+    if(go){ go.disabled=true; go.textContent='확인'; }
+    if(pw) pw.disabled=true;
+    bootBoard();   /* 렌더가 끝나면 render() 안에서 잠금 화면을 내립니다 */
   }
 
   function djb2(s){
