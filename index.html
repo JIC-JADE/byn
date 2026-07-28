@@ -192,12 +192,6 @@ a:hover{text-decoration:underline}
 .casesum .ct{flex:1}
 
 /* 모듈 진척 */
-/* 진척 막대 (표 내부) */
-.pb{height:8px;background:#e3e3e6;border-radius:4px;overflow:hidden;min-width:120px}
-.pb i{display:block;height:100%;background:var(--primary);border-radius:4px}
-.pv{font-size:14px;font-weight:600;letter-spacing:-0.4px}
-.pv.on{color:var(--primary)}
-
 /* 간트 범례 */
 .glg{display:flex;flex-wrap:wrap;gap:20px;padding-bottom:16px;margin-bottom:4px;
   border-bottom:1px solid var(--divider);font-size:12.5px;color:var(--muted48)}
@@ -612,10 +606,6 @@ const FALLBACK = {
     <div class="ph"><h1>WBS 일정</h1>
       <p class="sub">패키지 셋업과 추가개발을 한 장에 겹쳐 놓았습니다. 붉은 세로선이 오늘 위치입니다.</p></div>
     <div class="card">
-      <div class="ch"><h3>모듈별 진척</h3><span class="m" id="mod-m"></span></div>
-      <div class="cb"><div class="ts"><table class="t" id="mods"></table></div></div>
-    </div>
-    <div class="card">
       <div class="ch"><h3>전체 공정</h3><span class="m" id="g-m"></span>
         <button class="jump" id="jump" type="button">오늘 위치로</button></div>
       <div class="cb">
@@ -810,23 +800,6 @@ function render(DATA, srcLabel){
    +score('패키지 셋업',pPkg,pkgItems.length+'개 작업',false,CL.white)
    +score('추가개발',pDev,P.devMD+' M/D ('+P.devCount+'건)',false,CL.dev);
 
-  /* 모듈별 진척 */
-  $('mods').innerHTML='<thead><tr><th>모듈</th><th>주차</th><th>기간</th>'
-    +'<th class="r">작업</th><th>진척</th><th class="r">달성률</th></tr></thead><tbody>'
-    +DATA.pkg.map(function(g){
-      var v=(typeof g.pct==='number') ? g.pct : prog(g.items);
-      var s=(g.span&&g.span.s) || Math.min.apply(null,g.items.map(function(i){return i.s;}));
-      var e=(g.span&&g.span.e) || Math.max.apply(null,g.items.map(function(i){return i.e;}));
-      var dn=g.items.filter(function(i){ return i.st==='done'; }).length;
-      return '<tr><td><b>'+g.group+'</b></td>'
-        +'<td class="mn">'+s+'~'+e+'주차</td>'
-        +'<td class="mn">'+md(weeks[s-1].s)+' ~ '+md(weeks[e-1].e)+'</td>'
-        +'<td class="r mn">'+dn+' / '+g.items.length+'</td>'
-        +'<td style="width:34%"><div class="pb"><i style="width:'+pc(v)+'%"></i></div></td>'
-        +'<td class="r"><span class="pv'+(v>0?' on':'')+'">'+pc(v)+'%</span></td></tr>';
-    }).join('')+'</tbody>';
-  $('mod-m').textContent=DATA.pkg.length+'개 모듈, '+pkgItems.length+'개 작업';
-
   /* 간트 */
   (function(){
     var cols='repeat('+NW+',minmax(33px,1fr))';
@@ -881,6 +854,13 @@ function render(DATA, srcLabel){
       +'</div>';
     $('g-m').textContent=ymd(START)+' ~ '+ymd(END)+', 총 '+NW+'주';
 
+    /* 고정 헤더에 가려지지 않도록 실제 헤더 높이를 재서 씁니다 */
+    function headOff(gs){
+      var hd = gs.querySelector ? gs.querySelector('.ghead') : null;
+      var hh = (hd && hd.getBoundingClientRect) ? hd.getBoundingClientRect().height : 0;
+      return (hh > 0 ? hh : 76) + 10;
+    }
+
     /* 오늘 위치로 자동 스크롤 */
     function toToday(){
       var gs=$('gs'); if(!gs) return;
@@ -890,7 +870,7 @@ function render(DATA, srcLabel){
       var lv=gs.querySelector('.gr.live');
       if(lv){
         var a=gs.getBoundingClientRect(), b=lv.getBoundingClientRect();
-        gs.scrollTop += (b.top - a.top) - 72;
+        gs.scrollTop += (b.top - a.top) - headOff(gs);
       }
     }
     gotoWeek=function(w){
@@ -904,7 +884,7 @@ function render(DATA, srcLabel){
           for(var i=0;i<rs.length;i++){
             if(+rs[i].getAttribute('data-s')<=w && +rs[i].getAttribute('data-e')>=w){
               var a=gs.getBoundingClientRect(), b=rs[i].getBoundingClientRect();
-              gs.scrollTop += (b.top-a.top) - 72;
+              gs.scrollTop += (b.top-a.top) - headOff(gs);
               break;
             }
           }
