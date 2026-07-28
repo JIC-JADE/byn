@@ -210,8 +210,7 @@ a:hover{text-decoration:underline}
   background:var(--ink);color:#fff;font-size:10.5px;font-weight:600;padding:3px 9px;
   border-radius:9999px;white-space:nowrap;letter-spacing:-0.2px}
 .gr.live{background:#EAF2FD}
-.gr.grp.live{background:#DCEAFB}
-.gr.live .gn .nm{font-weight:600}
+.gr.grp.live{background:#DDE6F5}
 .wsel{appearance:none;-webkit-appearance:none;border:1px solid var(--hairline);
   background-color:var(--canvas);border-radius:9999px;padding:7px 32px 7px 15px;
   font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:-0.3px;
@@ -239,12 +238,19 @@ a:hover{text-decoration:underline}
 .gr{display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid var(--divider);
   background:var(--canvas)}
 .gr:last-child{border-bottom:0}
-.gr.grp .gn{font-weight:600}
-.gr.grp{background:var(--pearl)}
+/* 모듈 머리 행 : 위쪽에 실선을 그어 경계를 만들고 좌측에 세로 막대를 붙입니다 */
+.gr.grp{background:#EDEFF2;border-top:1px solid var(--ink)}
+.gr.grp .gn{font-weight:700;padding-left:14px}
+.gr.grp .gn::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ink)}
+.gr.grp .gn span.nm{font-size:13px;letter-spacing:-0.3px}
+/* 작업 행은 한 단 들여써서 소속을 드러냅니다 */
+.gr:not(.grp) .gn{padding-left:22px}
+.gr:not(.grp) .gn span.nm{color:var(--muted80)}
 .gn{padding:6px 10px 6px 4px;display:flex;align-items:center;gap:9px;min-width:0;
   position:sticky;left:0;z-index:4;background:inherit}
 .gn span.nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
 .gc{display:grid;position:relative;min-height:33px}
+.gr.grp .gc{min-height:37px}
 .gc>u{border-left:1px solid var(--divider);text-decoration:none}
 .gc>u.ms{border-left:1px solid var(--hairline)}
 .gb{position:absolute;height:11px;top:50%;transform:translateY(-50%);border-radius:6px}
