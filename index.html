@@ -45,12 +45,12 @@ a:hover{text-decoration:underline}
   display:flex;align-items:center;justify-content:center;padding:24px}
 #gate.off{display:none}
 .gate-card{width:100%;max-width:380px;text-align:center}
-.gate-logo{display:flex;align-items:center;justify-content:center;gap:13px;margin-bottom:30px}
-.gate-logo svg{width:50px;height:35px;fill:#9BA0B4;flex-shrink:0}
-.gate-logo b{font-size:27px;font-weight:800;letter-spacing:-0.8px;line-height:1;
-  color:var(--ink);flex-shrink:0}
-.gate-logo i{display:block;width:1px;height:28px;background:var(--hairline);flex-shrink:0}
-.gate-logo img{height:28px;opacity:.88;flex-shrink:0}
+.gate-logo{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:30px}
+.gate-logo .byn svg{width:56px;height:39px;fill:#9BA0B4}
+.gate-logo .byn b{margin-top:5px;font-size:26px;font-weight:800;line-height:1;
+  letter-spacing:0.3px;color:var(--ink)}
+.gate-logo i{display:block;width:1px;height:52px;background:var(--hairline);flex-shrink:0}
+.gate-logo img{height:30px;opacity:.88;flex-shrink:0}
 .gate-card h1{font-size:22px;font-weight:600;letter-spacing:-0.6px}
 .gate-card .gs-sub{font-size:14px;color:var(--muted48);margin-top:10px}
 .gate-form{margin-top:28px;display:flex;gap:8px}
@@ -67,12 +67,15 @@ a:hover{text-decoration:underline}
 /* ── 마스트헤드 ───────────────────────────────── */
 .top{border-bottom:1px solid var(--hairline);background:var(--canvas)}
 .top .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:68px;padding:10px 0}
-.brand{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--ink);
+/* BYN CI : 마크 아래에 워드마크가 같은 폭으로 오는 세로 조합 */
+.brand{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--ink);
   flex-shrink:0;white-space:nowrap}
-.ci{width:40px;height:28px;fill:#9BA0B4;display:block;flex-shrink:0}
-.brand b{font-size:22px;font-weight:800;letter-spacing:-0.6px;line-height:1;flex-shrink:0}
-.brand em{display:block;width:1px;height:24px;background:var(--hairline);flex-shrink:0}
-.hcg{height:24px;display:block;flex-shrink:0;opacity:.88}
+.byn{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.ci{width:34px;height:24px;fill:#9BA0B4;display:block}
+.byn b{margin-top:3px;font-size:16px;font-weight:800;line-height:1;letter-spacing:0.2px;
+  color:var(--ink)}
+.brand em{display:block;width:1px;height:34px;background:var(--hairline);flex-shrink:0}
+.hcg{height:22px;display:block;flex-shrink:0;opacity:.88}
 .top .sp{flex:1}
 .stamp{font-size:13px;color:var(--muted48)}
 .tag{display:inline-block;font-size:11px;font-weight:600;padding:4px 11px;
@@ -342,8 +345,9 @@ table.t{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}
   .wrap{padding:0 16px}
   .top .wrap{gap:10px}
   .brand{gap:9px}
-  .ci{width:32px;height:22px}
-  .brand b{font-size:18px}
+  .ci{width:29px;height:20px}
+  .byn b{font-size:14px;margin-top:2px}
+  .brand em{height:30px}
   .hcg{height:19px}
   .stamp{font-size:12px}
   .top .sp{flex-basis:100%;height:0}
@@ -391,9 +395,10 @@ table.t{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}
   .t td{padding:10px 10px}
   .wk-l b{font-size:22px}
   .gate-card h1{font-size:19px}
-  .gate-logo svg{width:42px;height:29px}
-  .gate-logo b{font-size:23px}
-  .gate-logo img{height:23px}
+  .gate-logo .byn svg{width:46px;height:32px}
+  .gate-logo .byn b{font-size:21px;margin-top:4px}
+  .gate-logo i{height:44px}
+  .gate-logo img{height:25px}
 }
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
@@ -449,8 +454,10 @@ const FALLBACK = {
 <div id="gate">
   <div class="gate-card" id="gate-card">
     <div class="gate-logo">
-      <svg viewBox="0 0 100 70" role="img" aria-label="BYN"><path d="M0 0 H100 V70 H64 L50 50 L36 70 H0 Z"/></svg>
-      <b>BYN</b>
+      <span class="byn" role="img" aria-label="BYN">
+        <svg viewBox="0 0 100 70" aria-hidden="true"><path d="M0 0 H100 V70 H64 L50 50 L36 70 H0 Z"/></svg>
+        <b>BYN</b>
+      </span>
       <i></i>
       <img src="" alt="HCG" id="gate-hcg">
     </div>
@@ -467,10 +474,13 @@ const FALLBACK = {
 <header class="top">
   <div class="wrap">
     <span class="brand">
-      <svg class="ci" viewBox="0 0 100 70" role="img" aria-label="BYN">
-        <path d="M0 0 H100 V70 H64 L50 50 L36 70 H0 Z"/>
-      </svg>
-      <b>BYN</b><em></em>
+      <span class="byn" role="img" aria-label="BYN">
+        <svg class="ci" viewBox="0 0 100 70" aria-hidden="true">
+          <path d="M0 0 H100 V70 H64 L50 50 L36 70 H0 Z"/>
+        </svg>
+        <b>BYN</b>
+      </span>
+      <em></em>
       <img class="hcg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAAAhCAYAAABQphx6AAAEWElEQVR42u2aaWhVRxTHf0oU6xI/JEYS90ZMXXCrikurgrVVRFRsxbgitCIK1roEpfWD2oIo4oZSW7Gi4IaIaKRFBbV1xTUuaRWDoOBWFzTuVl8/zHkgjzfLve/e5Cbm/+U97sycOfOf5SwzUIUqvE+o9s7/XoZ6RcATB3l1gQ6asrfAMR86ZgH9RG5rIBtoANQD7gEPgfvAeeCI9PEgYJ4ygIGix4eiU4Mk9W4Dl4CzwHbgqgvx9wwd9xdhNnQE9hvKMz0MtikwC8j3QdRhYAOwI0XCuwPfAEN8tj8JrAIKEwuq+9gZfuu98qDw17J6830O+BPgF+Ac0NlH+4bAZiFsSAoT1xVYLwuguR/iXREzlNV0lDEfWAh8EIA+jYG9wAgPbboAx2WXB4XewB6ZUE/Ex8rI5owHJjvUOwacAu44yl0N5DnUawtsE/thw33gDHAFeOq4i74La8WngkbAT5Y664ScwcAA+Z8L/CBG1gSb7FpiF9ItZM8G2slEfg70BJoBw8S2mDAqisTPk8HrsAAoSLLKHwE/A0OBUkP7vjJJOswRAnUoFtuxVryXRPwlOmw0yKgNfBwl4jNEaR1OAMstMi4Bv1rq9NF8rw9MNLR7CUwA/nUYy1zgtaE8FyAtIl6NzXNY6tj/PmC6oTxH8/0roIah3UqgxFGHJ8AMMezJUOKF+FgA9UxezWeGskeW2CDRb870seO+tBC5wqO8TbYKUfHj8yxkhokaFl9/F/As6E6jcMbXdDBqYaK9hYeDYXTqetSMtRwHcWRbCC5I8j3dIvNmgOPtAXya8O0jS5tiS4A2yqMOxUChF+KDQIGPNi8CJL6nDx1KLcR7lbcdKIySH6/D83Lu/3UYQisC8Wnl3H+d95X4uuXcf/3yXE2/OUZt2RZ7sEhjdKeVEfFHk+jQQgIoHVqg0svJ8FhkJiILaOnqd5suQno7unUdDcHOK0PkWGJYWVuBKSGu6KaoLKMOa4DvPcrMl2hXZ1wnlWVa2BS5nrP42WHiOsmTXnEM8hBAVhjDFUcR+gRWa1mV1x3kpAOTLFHwgSTf9wNjDC7jAOD3ykj8bmCqoXykxj4k4guLXz1fQ/xGA/GgknQnLcdxhfRqzgJ/G8qnAk0c5Ey0lOuOtNOWcz4TlbPJqIzu5BJDWS1gi3gLplXZyVD+APgzhai6Fer+dnhlOmoAdqIuG3Tve/JkZ/whLtw11HVhrhxFtnTwYofdsBrznW8z8XIWonL/F4AbqGvHdNSrghjqGpCK4E7GkSPtswKe1OOoe9qYAx/LgNEhLrBIuZNx3BQfuDTAge4RmTHHcX4L/Bj29o5iyqAIlUU8nKKcu8BM1JMRrxO5TM7yu2ENMo1o4hbq8rsb6jHSYEeP4jnwj7iHG1LU4RDQBpVvH4d66OQVl8UuXUNdxpcCFwkjIgsROWLc4rv0rRD9Qn4fSu4kTDQUI1oH9VSjGvBG7GP8avMN6gnKf1QhevgfzpXYgLy885YAAAAASUVORK5CYII=" alt="HCG 휴먼컨설팅그룹">
     </span>
     <span class="sp"></span>
@@ -1195,6 +1205,7 @@ function bootBoard(){
       if(C('가중치_추가개발')) D.weights.dev=n(C('가중치_추가개발'),D.weights.dev);
       D.previewDate = nd(C('미리보기기준일')) || null;
       if(C('이슈요약')) D.issueSummary=C('이슈요약');
+      if(C('새글표시일수')) D.newDays=n(C('새글표시일수'), 7);
       var pctCfg=function(v){
         var x=String(v==null?'':v).replace('%','').trim();
         if(x==='') return null;
@@ -1317,7 +1328,8 @@ function bootBoard(){
     if(t['산출물'] && t['산출물'].length){
       var dc=t['산출물'].map(function(r){
         return { cat:r['구분']||'', name:r['문서명']||'',
-                 date:r['배포일']||'', owner:r['담당']||'', st:st(r['상태']), url:r['링크']||'' };
+                 date:r['배포일']||'', owner:r['담당']||'', st:st(r['상태']),
+                 url:r['링크']||'' };
       }).filter(function(x){ return x.name; });
       if(dc.length){ D.docs=dc; used.push('산출물'); }
     }
@@ -1325,7 +1337,8 @@ function bootBoard(){
     if(t['이슈'] && t['이슈'].length){
       var is=t['이슈'].map(function(r){
         return { lv:r['영향도']||'중간', cause:r['원인']||'일정/선행조건', title:r['항목']||'',
-                 detail:r['상세']||'', action:r['대응방안']||'', owner:r['담당']||'', due:r['기한']||'' };
+                 detail:r['상세']||'', action:r['대응방안']||'', owner:r['담당']||'',
+                 due:r['기한']||'' };
       }).filter(function(x){ return x.title; });
       if(is.length){ D.issues=is; used.push('이슈'); }
     }
