@@ -23,6 +23,9 @@
   --dev:#d70015;  --dev-t:#e89b96;
   --band:#1d1d1f;
   --sans:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Inter',system-ui,sans-serif;
+  --lab:200px;   /* 간트 좌측 작업명 열 폭 */
+  --wkw:33px;    /* 간트 주차 열 최소 폭 */
+  --gmin:1010px; /* 간트 최소 폭 */
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -64,7 +67,7 @@ a:hover{text-decoration:underline}
 .gate-card.bad{animation:shake .4s}
 /* ── 마스트헤드 ───────────────────────────────── */
 .top{border-bottom:1px solid var(--hairline);background:var(--canvas)}
-.top .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;height:68px}
+.top .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:68px;padding:10px 0}
 .brand{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--ink);
   flex-shrink:0;white-space:nowrap}
 .ci{width:40px;height:28px;fill:#9BA0B4;display:block;flex-shrink:0}
@@ -170,9 +173,6 @@ a:hover{text-decoration:underline}
   letter-spacing:-0.3px;color:var(--muted48);cursor:pointer;white-space:nowrap}
 .tab:hover{color:var(--ink)}
 .tab[aria-selected="true"]{color:var(--primary);font-weight:600;border-bottom-color:var(--primary)}
-.tab b{font-size:11px;font-weight:600;margin-left:7px;background:var(--parchment);
-  color:var(--muted48);padding:2px 8px;border-radius:9999px}
-.tab[aria-selected="true"] b{background:#e8f1fc;color:var(--primary)}
 
 /* ── 패널 ─────────────────────────────────────── */
 .panel{padding:36px 0 88px}
@@ -217,7 +217,7 @@ a:hover{text-decoration:underline}
 /* 간트 */
 .gs{overflow:auto;max-height:600px;position:relative;
   border:1px solid var(--divider);border-radius:12px}
-.gantt{min-width:1010px;font-size:13px}
+.gantt{min-width:var(--gmin);font-size:13px}
 .ghead{position:sticky;top:0;z-index:8;background:var(--canvas);padding-top:26px}
 .nowtag{position:absolute;top:2px;transform:translateX(-50%);z-index:9;
   background:var(--ink);color:#fff;font-size:10.5px;font-weight:600;padding:3px 9px;
@@ -239,17 +239,15 @@ a:hover{text-decoration:underline}
   color:var(--primary);cursor:pointer;margin-left:auto}
 .jump:hover{background:#e8f1fc}
 .ch .m + .jump{margin-left:12px}
-.gh{display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid var(--ink);
-  background:var(--canvas)}
-.gh-l{padding:8px 4px;font-size:11.5px;font-weight:600;color:var(--muted48);
-  position:sticky;left:0;z-index:10;background:var(--canvas)}
-.gh-r{display:grid}
+.gh{display:flex;border-bottom:1px solid var(--ink);background:var(--canvas)}
+.gh-l{flex:0 0 var(--lab);padding:8px 4px;font-size:11.5px;font-weight:600;
+  color:var(--muted48);position:sticky;left:0;z-index:10;background:var(--canvas)}
+.gh-r{flex:1 1 auto}
 .gm{font-size:11.5px;font-weight:600;color:var(--muted48);text-align:center;padding:4px 0 2px}
 .gw{text-align:center;padding:3px 0 7px;color:var(--muted48)}
 .gw b{display:block;font-size:11px;font-weight:600;color:var(--muted80)}
 .gw i{display:block;font-style:normal;font-size:9px;margin-top:1px;letter-spacing:-0.4px}
-.gr{display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid var(--divider);
-  background:var(--canvas)}
+.gr{display:flex;border-bottom:1px solid var(--divider);background:var(--canvas)}
 .gr:last-child{border-bottom:0}
 /* 모듈 머리 행 : 위쪽에 실선을 그어 경계를 만들고 좌측에 세로 막대를 붙입니다 */
 .gr.grp{background:#EDEFF2;border-top:1px solid var(--ink)}
@@ -259,10 +257,10 @@ a:hover{text-decoration:underline}
 /* 작업 행은 한 단 들여써서 소속을 드러냅니다 */
 .gr:not(.grp) .gn{padding-left:22px}
 .gr:not(.grp) .gn span.nm{color:var(--muted80)}
-.gn{padding:6px 10px 6px 4px;display:flex;align-items:center;gap:9px;min-width:0;
-  position:sticky;left:0;z-index:4;background:inherit}
+.gn{flex:0 0 var(--lab);padding:6px 10px 6px 4px;display:flex;align-items:center;gap:9px;
+  min-width:0;position:sticky;left:0;z-index:4;background:inherit}
 .gn span.nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
-.gc{display:grid;position:relative;min-height:33px}
+.gc{flex:1 1 auto;display:grid;position:relative;min-height:33px}
 .gr.grp .gc{min-height:37px}
 .gc>u{border-left:1px solid var(--divider);text-decoration:none}
 .gc>u.ms{border-left:1px solid var(--hairline)}
@@ -275,6 +273,9 @@ a:hover{text-decoration:underline}
   pointer-events:none;box-shadow:0 0 0 1.5px rgba(255,255,255,.9)}
 .gw.now b,.gw.now i{color:var(--ink)}
 .gw.now b{font-weight:700}
+
+.swipe{display:none;margin-top:10px;font-size:12px;color:var(--muted48);text-align:center}
+@media (max-width:900px){ .swipe{display:block} }
 
 /* 테이블 */
 .ts{overflow-x:auto}
@@ -320,14 +321,75 @@ table.t{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}
 @media (max-width:900px){
   .wrap{padding:0 20px}
   .mmap,.mstones{grid-template-columns:repeat(2,1fr)}
-  .mm{height:330px}
+  .mm{height:300px}
   .band-in{grid-template-columns:1fr}
-  .sc{border-right:0;border-bottom:1px solid rgba(255,255,255,.12)}
+  .sc{border-right:0;border-bottom:1px solid rgba(255,255,255,.12);padding:22px 0}
   .sc:last-child{border-bottom:0}
   .specs{grid-template-columns:1fr 1fr}
   .spec dd{font-size:15px}
   .wk{grid-template-columns:1fr;gap:14px}
   .title-main h1{font-size:31px}
+  :root{--lab:150px;--wkw:30px;--gmin:0px}
+}
+
+/* ── 휴대폰 ─────────────────────────────────────── */
+@media (max-width:640px){
+  :root{--lab:118px;--wkw:26px;--gmin:0px}
+  .wrap{padding:0 16px}
+  .top .wrap{gap:10px}
+  .brand{gap:9px}
+  .ci{width:32px;height:22px}
+  .brand b{font-size:18px}
+  .hcg{height:19px}
+  .stamp{font-size:12px}
+  .top .sp{flex-basis:100%;height:0}
+
+  .title{padding:26px 0 20px}
+  .title .wrap{gap:20px}
+  .title-main h1{font-size:25px;letter-spacing:-0.6px}
+  .title-main .sub{font-size:14px;margin-top:8px}
+  .specs{grid-template-columns:1fr;gap:0;border-radius:16px;overflow:hidden;
+    background:var(--parchment)}
+  .spec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    padding:11px 16px;border-radius:0;box-shadow:0 1px 0 #e6e6ea}
+  .spec dt{margin-bottom:0}
+  .spec dd{font-size:15px;white-space:normal;text-align:right}
+
+  .band{border-radius:16px}
+  .sc{padding:18px 20px}
+  .sc-v{font-size:42px}
+  .card{border-radius:14px}
+  .ch{padding:14px 16px 0;gap:8px}
+  .ch h3{font-size:15px}
+  .cb{padding:14px 16px 18px}
+  .ph h1{font-size:24px}
+  .ph .sub{font-size:14px}
+  .panel{padding:24px 0 56px}
+
+  .mmap,.mstones{grid-template-columns:repeat(2,1fr);gap:10px}
+  .mm{height:270px;padding:13px 13px}
+  .mm-h b{font-size:17px}
+  .mm li{font-size:12px}
+  .ms-c{font-size:11.5px;padding:5px 10px}
+
+  .tab{padding:13px 12px 11px;font-size:14px}
+  .wsel{margin-left:0;margin-top:8px;width:100%}
+  .ch .m{font-size:12px}
+
+  .gantt{font-size:12px}
+  .gn span.nm{font-size:11.5px}
+  .gr:not(.grp) .gn{padding-left:16px}
+  .gs{max-height:56vh}
+  .glg{gap:12px;font-size:11.5px}
+
+  table.t{min-width:520px;font-size:13px}
+  .t th{padding:0 10px 8px;font-size:11px}
+  .t td{padding:10px 10px}
+  .wk-l b{font-size:22px}
+  .gate-card h1{font-size:19px}
+  .gate-logo svg{width:42px;height:29px}
+  .gate-logo b{font-size:23px}
+  .gate-logo img{height:23px}
 }
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
@@ -351,214 +413,32 @@ table.t{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}
 
    ② SHEET_ID 가 비어 있거나 시트를 못 읽으면 아래 FALLBACK 값을 씁니다.
    ════════════════════════════════════════════════════════════════ */
-const SHEET_ID = '1Oa8GCh0u1D16qrvNAKrLF1cFR2o_RXZZCpbCGWbTIi0';
+/* 시트 ID 는 비밀번호로 암호화되어 있습니다.
+   비밀번호를 모르면 소스를 봐도 시트 주소를 알 수 없습니다.
+   바꾸려면  python sheetlock.py <비밀번호> <시트ID>  로 다시 만들어 붙여넣으세요. */
+const SHEET_ENC = {
+  salt: 'D4GrLWhRZX3poj1MNFPLbQ==',
+  iv:   'PPupYwQjTsEIBdhR',
+  ct:   '3+z4xLdlKIBPMgh4jXhDAaz26Um3pzEG9cBOpr2JNdE0g6+zsg5xPWFwCL9FAHy3gNKSrpMgNSKIwwQU',
+  iter: 200000
+};
+var SHEET_ID = '';   /* 비밀번호를 맞히면 이 자리에 채워집니다 */
 
 const TABS = { 설정:'설정', WBS:'WBS', 패키지진척:'패키지진척', 마일스톤:'마일스톤',
                주간업무:'주간업무', 녹화본:'녹화본', 산출물:'산출물', 이슈:'이슈' };
 
+/* 화면 뼈대 기본값입니다. 실제 내용은 전부 구글 시트에서 읽어옵니다.
+   프로젝트 데이터를 여기에 두면 소스만 봐도 읽히므로 비워 두었습니다. */
 const FALLBACK = {
-
-  project: {
-    name:'JaDE 인사시스템 구축', client:'BYN', vendor:'휴먼컨설팅그룹',
-    solution:'JaDE HR Package',
-    start:'2026-08-03', end:'2027-01-12', openDate:'2027-01-04',
-    devMD:225, devCount:17
-  },
-
+  project: { name:'프로젝트 현황', client:'', vendor:'휴먼컨설팅그룹',
+             solution:'JaDE HR Package',
+             start:'2026-08-03', end:'2027-01-12', openDate:'2027-01-04',
+             devMD:0, devCount:0 },
   weights: { pkg:0.45, dev:0.55 },
-
-  // 미리보기용 기준일. 실제 운영할 때는 null 로 바꾸면 오늘 날짜를 씁니다.
-  // 미리보기용 기준일. 시트를 연결하면 시트의 '미리보기기준일' 값으로 대체되고, 비워두면 오늘 날짜를 씁니다.
-  previewDate: '2026-08-03',
-
-  pkg: [
-    { group:'프로젝트 준비', items:[
-      { n:'개발서버 설정',                 s:1,  e:1,  st:'todo' },
-      { n:'구축 프로세스 및 사전준비 안내', s:1,  e:1,  st:'todo' },
-      { n:'공통코드 등록',                 s:1,  e:2,  st:'todo' },
-      { n:'법인/조직/공통코드 등록',        s:2,  e:2,  st:'todo' },
-      { n:'인사정보 마이그레이션',          s:2,  e:3,  st:'todo' },
-      { n:'인사기초자료 및 발령사항 등록',  s:3,  e:3,  st:'todo' },
-    ]},
-    { group:'조직/인사', items:[
-      { n:'업무요건 상세',                 s:2,  e:2,  st:'todo' },
-      { n:'조직/인사 기본사용법 교육',      s:3,  e:3,  st:'todo' },
-      { n:'인사자료 추가사항 등록',         s:3,  e:5,  st:'todo' },
-    ]},
-    { group:'근태관리', items:[
-      { n:'업무요건 상세',                 s:5,  e:5,  st:'todo' },
-      { n:'근태관리 사용법 교육',           s:6,  e:6,  st:'todo' },
-      { n:'근태기준 정리 및 등록',          s:6,  e:8,  st:'todo' },
-      { n:'연차발생 기준 정리 및 등록',     s:7,  e:8,  st:'todo' },
-      { n:'근태기준 확인 및 데이터 입력',   s:8,  e:9,  st:'todo' },
-    ]},
-    { group:'신청서관리', items:[
-      { n:'신청서관리 사용법 교육',         s:9,  e:9,  st:'todo' },
-      { n:'신청서 유형 정리 및 등록',       s:9,  e:11, st:'todo' },
-      { n:'신청서 기준 등록사항 확인',      s:11, e:11, st:'todo' },
-    ]},
-    { group:'급여/세무관리', items:[
-      { n:'업무요건 상세',                 s:11, e:11, st:'todo' },
-      { n:'급여관리 사용법 교육',           s:12, e:12, st:'todo' },
-      { n:'급여기준 정리 및 등록',          s:12, e:14, st:'todo' },
-      { n:'급여자료 이관 및 확인',          s:13, e:14, st:'todo' },
-      { n:'퇴직금 사용법 교육',             s:14, e:14, st:'todo' },
-      { n:'퇴직금 기준 정리 및 등록',       s:14, e:15, st:'todo' },
-      { n:'급여/퇴직금 확인 및 계산',       s:15, e:16, st:'todo' },
-      { n:'세무관리 사용법 교육',           s:15, e:15, st:'todo' },
-      { n:'세무관리 확인 및 계산',          s:16, e:16, st:'todo' },
-    ]},
-    { group:'평가관리', items:[
-      { n:'업무요건 상세',                 s:16, e:16, st:'todo' },
-      { n:'직무/역량/KPI 등록',            s:16, e:17, st:'todo' },
-      { n:'평가기준 등록',                 s:17, e:17, st:'todo' },
-      { n:'평가관리 사용법 교육',           s:17, e:17, st:'todo' },
-      { n:'평가기준 확인 및 데이터 입력',   s:17, e:18, st:'todo' },
-    ]},
-    { group:'교육관리', items:[
-      { n:'교육관리 사용법 교육',           s:18, e:18, st:'todo' },
-      { n:'교육관리 데이터 정리 및 입력',   s:18, e:19, st:'todo' },
-    ]},
-    { group:'모바일/시스템관리', items:[
-      { n:'모바일 사용법 교육',             s:19, e:19, st:'todo' },
-      { n:'모바일 데이터 확인 및 메뉴설정', s:19, e:20, st:'todo' },
-      { n:'시스템관리 사용법 교육',         s:19, e:19, st:'todo' },
-      { n:'권한자 등록 및 메뉴설정',        s:20, e:20, st:'todo' },
-    ]},
-    { group:'검수', items:[
-      { n:'검수 시나리오 작성',             s:20, e:21, st:'todo' },
-      { n:'모듈별 검수 진행',               s:21, e:22, st:'todo' },
-      { n:'검수 확인',                     s:22, e:22, st:'todo' },
-    ]},
-    { group:'전이/오픈', items:[
-      { n:'데이터 및 기준설정 최종점검',    s:22, e:23, st:'todo' },
-      { n:'추가개발 및 연동 최종점검',      s:22, e:23, st:'todo' },
-      { n:'인사시스템 오픈',                s:23, e:23, st:'todo' },
-      { n:'안정화 지원',                   s:23, e:24, st:'todo' },
-    ]},
-  ],
-
-  dev: [
-    { n:'업무분석',       s:3,  e:4,  st:'todo', memo:'요건정의서 확정' },
-    { n:'설계',           s:6,  e:8,  st:'todo', memo:'설계서 리뷰 및 확정' },
-    { n:'개발',           s:8,  e:20, st:'todo', memo:'단위개발 및 단위테스트' },
-    { n:'리뷰 및 테스트', s:20, e:23, st:'todo', memo:'통합테스트 및 결함 조치' },
-  ],
-
-  // ── 패키지 진척 (모듈별 5단계) ──────────────────────────────
-  // 값: '완료' / '진행중' / '해당없음' / '' (미착수)
-  // 가중치는 모듈의 일정 범위(주 수)를 넣습니다. 범위가 큰 모듈이 더 크게 반영됩니다.
-  pkgSteps: [
-    { mod:'조직/인사',  w:4, steps:{ 업무분석:'완료', 교육:'완료',   셋업:'완료',   테스트:'완료',   마이그레이션:'완료' } },
-    { mod:'근태',      w:5, steps:{ 업무분석:'완료', 교육:'완료',   셋업:'진행중', 테스트:'',      마이그레이션:'' } },
-    { mod:'신청관리',   w:3, steps:{ 업무분석:'완료', 교육:'진행중', 셋업:'',      테스트:'',      마이그레이션:'해당없음' } },
-    { mod:'급여/퇴직금', w:4, steps:{ 업무분석:'완료', 교육:'',      셋업:'',      테스트:'',      마이그레이션:'' } },
-    { mod:'세무관리',   w:2, steps:{ 업무분석:'',    교육:'',      셋업:'',      테스트:'',      마이그레이션:'' } },
-    { mod:'평가',      w:3, steps:{ 업무분석:'',    교육:'',      셋업:'',      테스트:'',      마이그레이션:'' } },
-    { mod:'교육',      w:2, steps:{ 업무분석:'',    교육:'',      셋업:'',      테스트:'',      마이그레이션:'' } },
-    { mod:'시스템',     w:2, steps:{ 업무분석:'해당없음', 교육:'',  셋업:'',      테스트:'',      마이그레이션:'' } },
-  ],
-
-  // 주요 마일스톤. 날짜만 고치면 상단 칩과 '다음 마일스톤'이 자동 갱신됩니다.
-  milestones: [
-    { n:'킥오프 미팅',      d:'2026-08-03' },
-    { n:'요건정의서 확정',  d:'2026-08-30' },
-    { n:'설계 확정',        d:'2026-09-27' },
-    { n:'추가개발 완료',    d:'2026-12-20' },
-    { n:'검수 완료',        d:'2027-01-03' },
-    { n:'시스템 오픈',      d:'2027-01-04' },
-    { n:'통합테스트 완료',  d:'2027-01-10' },
-  ],
-
-  // ── 교육 녹화본 ───────────────────────────────────────────────
-  // mod  : 모듈명 (색상은 아래 이름으로 자동 매칭)
-  // url  : 녹화본 링크. 비우면 '예정'으로 표시됩니다.
-  // who  : 참여자. 줄바꿈은 배열로 넣으세요.
-  recordings: [
-    { mod:'조직/인사', date:'2026-08-17', topic:'사전준비 안내', who:[], title:'구축 프로세스 및 사전준비 안내', url:'' },
-    { mod:'조직/인사', date:'2026-08-17', topic:'사용자 교육',   who:[], title:'조직/인사 모듈 사용자 교육',      url:'' },
-    { mod:'근태',     date:'2026-09-07', topic:'사용자 교육',   who:[], title:'근태 모듈 사용자 교육',           url:'' },
-    { mod:'신청서',   date:'2026-09-28', topic:'사용자 교육',   who:[], title:'신청서 모듈 사용자 교육',         url:'' },
-    { mod:'급여/세무', date:'2026-10-19', topic:'사용자 교육',   who:[], title:'급여 모듈 사용자 교육',           url:'' },
-    { mod:'급여/세무', date:'2026-11-02', topic:'사용자 교육',   who:[], title:'퇴직금 사용법 교육',              url:'' },
-    { mod:'급여/세무', date:'2026-11-09', topic:'사용자 교육',   who:[], title:'세무관리 사용법 교육',            url:'' },
-    { mod:'평가',     date:'2026-11-23', topic:'사용자 교육',   who:[], title:'평가 모듈 사용자 교육',           url:'' },
-    { mod:'교육',     date:'2026-11-30', topic:'사용자 교육',   who:[], title:'교육 모듈 사용자 교육',           url:'' },
-    { mod:'모바일',   date:'2026-12-07', topic:'사용자 교육',   who:[], title:'모바일 사용자 교육',              url:'' },
-    { mod:'시스템',   date:'2026-12-07', topic:'사용자 교육',   who:[], title:'시스템관리 사용자 교육',          url:'' },
-  ],
-
-  // 공수산정내역서 REV1.2 확정 요건을 아래에 옮겨 적으면 표와 집계가 자동 생성됩니다.
-  // { no:1, cat:'인사', name:'요건명', md:20, owner:'개발팀', st:'todo' },
-  devItems: [],
-
-  // week : 주차 번호 (0 = 착수 전)
-  // done = 금주 실적 / next = 차주 계획 / req = 요청사항
-  weekly: [
-    { week:1, period:'2026.08.03 ~ 08.09', title:'킥오프 및 환경 구성',
-      done:[
-        '킥오프 미팅 진행, 수행계획서 확정',
-        '개발서버 설정 완료, 접속정보 공유',
-        '구축 프로세스 및 사전준비 안내 교육',
-      ],
-      next:[
-        '법인 / 조직 / 공통코드 등록',
-        '인사정보 마이그레이션 착수',
-        '조직 / 인사 업무요건 상세 협의',
-      ],
-      req:[
-        '조직 기초데이터 양식 작성 회신 요청',
-        '법인 사용인감 이미지 및 사업장 정보 전달 요청',
-      ] },
-    { week:2, period:'2026.08.10 ~ 08.16', title:'조직 / 인사 마이그레이션',
-      done:[
-        '법인 / 조직 / 공통코드 등록 완료',
-        '인사정보 마이그레이션 1차 업로드',
-        '조직 / 인사 업무요건 상세 협의 완료',
-      ],
-      next:[
-        '인사기초자료 및 발령사항 등록',
-        '조직 / 인사 기본사용법 교육',
-        '추가개발 업무분석 착수 (08.17)',
-      ],
-      req:[
-        '사전질의서 회신 <b>08.10 마감</b>. 미회신 항목은 상세분석 미팅 안건으로 전환합니다.',
-        '인사 마이그레이션 검증 담당자 지정 요청',
-      ] },
-  ],
-
-  // url : 파일을 index.html 옆에 두면 ./파일명 으로, 드라이브면 공유링크를 넣으세요.
-  docs: [
-    { cat:'착수',   name:'상세분석 사전질의서', date:'2026.07.28', owner:'JaDE PM', st:'done',
-      url:'https://byn-review.netlify.app/사전질의서/' },
-    { cat:'착수',   name:'구축 WBS',            date:'2026.07.28', owner:'JaDE PM', st:'done',
-      url:'./BYN_JaDE_WBS.xlsx' },
-    { cat:'설계',   name:'요건정의서',          date:'', owner:'개발 PM', st:'todo', url:'' },
-    { cat:'설계',   name:'추가개발 설계서',     date:'', owner:'개발 PM', st:'todo', url:'' },
-    { cat:'설계',   name:'인터페이스 정의서',   date:'', owner:'개발 PM', st:'todo', url:'' },
-    { cat:'매뉴얼', name:'JaDE 표준 매뉴얼',    date:'', owner:'JaDE PM', st:'todo', url:'' },
-    { cat:'검수',   name:'검수 시나리오',       date:'', owner:'JaDE PM', st:'todo', url:'' },
-    { cat:'검수',   name:'검수확인서',          date:'', owner:'BYN',     st:'todo', url:'' },
-  ],
-
-  // cause: '일정/선행조건' (회색 태그) 또는 '자원/공수' (빨강 태그)
-  issues: [
-    { lv:'높음', cause:'일정/선행조건', title:'사전질의서 회신 지연 시 설계 구간 압축',
-      detail:'요건정의서 확정 08.30, 설계 완료 09.27 일정이 <b>회신일에 직접 연동</b>됩니다.',
-      action:'C섹션(전표 인터페이스) 우선 회신 요청, 미회신 항목은 상세분석 미팅 안건으로 전환',
-      owner:'JaDE PM', due:'2026.08.10' },
-    { lv:'중간', cause:'자원/공수', title:'추가개발 개발 구간과 패키지 교육 구간 병행',
-      detail:'09월부터 12월까지 패키지 모듈 교육 및 셋업과 추가개발이 <b>동시에 진행</b>됩니다.',
-      action:'개발 2.5~3명 병렬 투입 유지, 주간 단위 투입인력 점검',
-      owner:'JaDE PM', due:'상시' },
-    { lv:'중간', cause:'자원/공수', title:'예비공수 40 M/D 소진 관리',
-      detail:'변경요건 누적 시 <b>예비공수 조기 소진</b> 가능성이 있습니다.',
-      action:'변경요건 발생 시 영향도 산정 후 우선순위 협의, 초과분은 유지보수 이관',
-      owner:'JaDE PM', due:'상시' },
-  ],
-
-  // 이슈 탭 상단 공통 사유 문구
-  issueSummary:'현재 식별된 리스크는 대부분 <b>선행조건 회신 시점과 병행 구간의 인력 배분</b>에서 발생합니다. 개발 난이도보다 일정 선후 관계가 핵심 변수입니다.',
+  previewDate: null,
+  pkg: [], dev: [], pkgSteps: [], devItems: [],
+  milestones: [], weekly: [], recordings: [], docs: [], issues: [],
+  issueSummary: ''
 };
 </script>
 
@@ -626,12 +506,12 @@ const FALLBACK = {
 <nav class="tabs">
   <div class="wrap" role="tablist" aria-label="현황 보기">
     <button class="tab" role="tab" data-p="p-wbs"  aria-selected="true">WBS 일정</button>
-    <button class="tab" role="tab" data-p="p-pkg"  aria-selected="false">패키지 진척<b id="n-pkg"></b></button>
+    <button class="tab" role="tab" data-p="p-pkg"  aria-selected="false">패키지 진척</button>
     <button class="tab" role="tab" data-p="p-week" aria-selected="false">주간 업무</button>
     <button class="tab" role="tab" data-p="p-dev"  aria-selected="false">추가개발</button>
-    <button class="tab" role="tab" data-p="p-rec"  aria-selected="false">녹화본<b id="n-rec"></b></button>
-    <button class="tab" role="tab" data-p="p-doc"  aria-selected="false">산출물<b id="n-doc"></b></button>
-    <button class="tab" role="tab" data-p="p-iss"  aria-selected="false">이슈<b id="n-iss"></b></button>
+    <button class="tab" role="tab" data-p="p-rec"  aria-selected="false">녹화본</button>
+    <button class="tab" role="tab" data-p="p-doc"  aria-selected="false">산출물</button>
+    <button class="tab" role="tab" data-p="p-iss"  aria-selected="false">이슈</button>
   </div>
 </nav>
 
@@ -647,6 +527,7 @@ const FALLBACK = {
           <span><span class="pair"><i class="sw p"></i><i class="sw d"></i></span>진행 구간 (패키지 / 추가개발)</span>
         </div>
         <div class="gs" id="gs"><div class="gantt" id="gantt"></div></div>
+        <p class="swipe">좌우로 밀어서 전체 기간을 볼 수 있습니다</p>
       </div>
     </div>
   </section>
@@ -822,7 +703,7 @@ function render(DATA, srcLabel){
         +'</div>';
     }).join('');
     var mm=$('mmap');
-    mm.style.setProperty('--cols', Math.min(months.length,6));
+    mm.style.setProperty('--cols', String(Math.min(months.length,6)));
     mm.innerHTML=html;
     if(mm.querySelectorAll){
       var cards=mm.querySelectorAll('.mm');
@@ -854,7 +735,7 @@ function render(DATA, srcLabel){
       buckets[colOf(x.d)].push('<span class="ms-c'+cls+'"><em>'+ymd(x.d).slice(2)+'</em><b>'+x.n+'</b></span>');
     });
     var msEl=$('mstones');
-    msEl.style.setProperty('--cols', Math.min(months.length,6));
+    msEl.style.setProperty('--cols', String(Math.min(months.length,6)));
     msEl.innerHTML=buckets.map(function(b){
       return '<div class="ms-col">'+(b.length?b.join(''):'<span class="ms-none">&mdash;</span>')+'</div>';
     }).join('');
@@ -874,7 +755,7 @@ function render(DATA, srcLabel){
 
   /* 간트 */
   (function(){
-    var cols='repeat('+NW+',minmax(33px,1fr))';
+    var cols='repeat('+NW+',minmax(var(--wkw),1fr))';
     var ms={}, lm=null;
     weeks.forEach(function(w,i){ if(w.s.getMonth()!==lm){ ms[i]=1; lm=w.s.getMonth(); } });
     var runs=[],run=1;
@@ -915,7 +796,7 @@ function render(DATA, srcLabel){
     if(today>=START && today<=new Date(+START+NW*7*DAY-1)){
       nl = Math.min(1, Math.max(0, (today-START)/DAY / (NW*7)));
     }
-    var lpos = nl!==null ? 'left:calc(200px + (100% - 200px) * '+nl+')' : '';
+    var lpos = nl!==null ? 'left:calc(var(--lab) + (100% - var(--lab)) * '+nl+')' : '';
     $('gantt').innerHTML='<div class="gwrap">'
       +'<div class="ghead">'
         +(nl!==null ? '<span class="nowtag" style="'+lpos+'">오늘 '+md(today)+'</span>' : '')
@@ -927,6 +808,11 @@ function render(DATA, srcLabel){
     $('g-m').textContent=ymd(START)+' ~ '+ymd(END)+', 총 '+NW+'주';
 
     /* 고정 헤더에 가려지지 않도록 실제 헤더 높이를 재서 씁니다 */
+    function labW(gs){
+      var l = gs.querySelector ? gs.querySelector('.gh-l') : null;
+      var w = (l && l.getBoundingClientRect) ? l.getBoundingClientRect().width : 0;
+      return w > 0 ? w : 200;
+    }
     function headOff(gs){
       var hd = gs.querySelector ? gs.querySelector('.ghead') : null;
       var hh = (hd && hd.getBoundingClientRect) ? hd.getBoundingClientRect().height : 0;
@@ -937,7 +823,8 @@ function render(DATA, srcLabel){
     function toToday(){
       var gs=$('gs'); if(!gs) return;
       if(nl!==null){
-        gs.scrollLeft=Math.max(0, 200 + (gs.scrollWidth-200)*nl - gs.clientWidth*0.33);
+        var LW=labW(gs);
+        gs.scrollLeft=Math.max(0, LW + (gs.scrollWidth-LW)*nl - gs.clientWidth*0.33);
       }
       var lv=gs.querySelector('.gr.live');
       if(lv){
@@ -950,7 +837,8 @@ function render(DATA, srcLabel){
       var run=function(){
         var gs=$('gs'); if(!gs) return;
         /* 간트 내부를 해당 월 구간으로 */
-        gs.scrollLeft=Math.max(0, 200+(gs.scrollWidth-200)*((w-1)/NW) - gs.clientWidth*0.14);
+        var LW=labW(gs);
+        gs.scrollLeft=Math.max(0, LW+(gs.scrollWidth-LW)*((w-1)/NW) - gs.clientWidth*0.14);
         if(gs.querySelectorAll){
           var rs=gs.querySelectorAll('.gr[data-s]');
           for(var i=0;i<rs.length;i++){
@@ -986,7 +874,6 @@ function render(DATA, srcLabel){
     if(!L.length){
       el.innerHTML='<tbody><tr><td class="empty">시트의 <code>패키지진척</code> 탭에 모듈과 단계를 입력하면 여기에 표시됩니다.</td></tr></tbody>';
       $('pkg-m').textContent='등록 전';
-      $('n-pkg').textContent='';
       return;
     }
     var cell=function(v){
@@ -999,16 +886,14 @@ function render(DATA, srcLabel){
     var body=L.map(function(p){
       var v=stepPct(p); if(v>=1) doneMods++;
       return '<tr><td><b>'+p.mod+'</b></td>'
-        +'<td class="r mn">'+(p.w>0?p.w:1)+'</td>'
         +STEPS.map(function(k){ return '<td class="ctr">'+cell(p.steps[k])+'</td>'; }).join('')
         +'<td style="width:22%"><div class="mbar"><i style="width:'+pc(v)+'%"></i></div></td>'
         +'<td class="r"><span class="mpct'+(v>0?' on':'')+'">'+pc(v)+'%</span></td></tr>';
     }).join('');
-    el.innerHTML='<thead><tr><th>모듈</th><th class="r">가중치</th>'
+    el.innerHTML='<thead><tr><th>모듈</th>'
       +STEPS.map(function(k){ return '<th class="ctr">'+k+'</th>'; }).join('')
       +'<th>진척</th><th class="r">달성률</th></tr></thead><tbody>'+body+'</tbody>';
     $('pkg-m').textContent=doneMods+' / '+L.length+'개 모듈 완료';
-    $('n-pkg').textContent=doneMods+'/'+L.length;
   })();
 
   /* 주간 업무 */
@@ -1135,7 +1020,6 @@ function render(DATA, srcLabel){
       : '<tbody><tr><td class="empty"><code>DATA.recordings</code>에 회차를 추가하면 표가 생성됩니다.</td></tr></tbody>';
     var done=R.filter(function(r){ return !!r.url; }).length;
     $('rec-m').textContent = done+' / '+R.length+'회차 등록, '+order.length+'개 모듈';
-    $('n-rec').textContent = done+'/'+R.length;
   })();
 
   /* 산출물 */
@@ -1151,7 +1035,6 @@ function render(DATA, srcLabel){
         +'<td class="mn">'+(d.date||'—')+'</td><td class="mn">'+(d.owner||'')+'</td>'
         +'<td><span class="tag '+cls+'">'+({done:'배포',doing:'작성중',todo:'예정'}[d.st])+'</span></td></tr>'; }).join('')
     +'</tbody>';
-  $('n-doc').textContent=DATA.docs.filter(function(d){ return d.st==='done'; }).length+'/'+DATA.docs.length;
 
   /* 이슈 */
   $('iss-sum').innerHTML='<span class="lb">공통 사유</span><span class="ct">'+DATA.issueSummary+'</span>';
@@ -1164,7 +1047,6 @@ function render(DATA, srcLabel){
         +'<td><span class="tag '+cc+'">'+x.cause+'</span></td>'
         +'<td class="dt">'+x.action+'</td><td class="mn">'+x.owner+'</td><td class="mn">'+x.due+'</td></tr>'; }).join('')
     +'</tbody>';
-  $('n-iss').textContent=DATA.issues.filter(function(i){ return i.lv==='높음'; }).length+'/'+DATA.issues.length;
 
   /* 탭 */
   var tabs=Array.prototype.slice.call(document.querySelectorAll('.tab'));
@@ -1227,13 +1109,24 @@ function bootBoard(){
   }
 
   function getTab(tab){
-    return fetch(csvUrl(tab)).then(function(r){
-      if(!r.ok) throw new Error('http');
+    var url=csvUrl(tab);
+    return fetch(url).then(function(r){
+      if(!r.ok) throw new Error('HTTP ' + r.status + (r.status===404 ? ' (시트 주소를 찾을 수 없음)' : ''));
       return r.text();
     }).then(function(t){
-      if(t.charAt(0)==='<') throw new Error('not shared');
-      return objectify(parseCSV(t));
-    }).catch(function(){ return null; });
+      if(t.charAt(0)==='<'){
+        throw new Error('시트가 공개되지 않았거나 주소가 틀립니다 (구글이 로그인 화면을 보냄)');
+      }
+      var rows=objectify(parseCSV(t));
+      if(!rows.length) throw new Error('탭은 열렸지만 데이터 행이 없습니다 (탭 이름 확인)');
+      return rows;
+    }).catch(function(e){
+      if(window.console && console.warn){
+        console.warn('[현황판] ' + tab + ' 탭 실패 — ' + (e && e.message ? e.message : e));
+        console.warn('         요청 주소: ' + url);
+      }
+      return null;
+    });
   }
 
   var ST={ '완료':'done','진행중':'doing','진행':'doing','예정':'todo','대기':'todo',
@@ -1433,8 +1326,7 @@ function bootBoard(){
   }
 
   if(!SHEET_ID){
-    render(FALLBACK, { ok:false, text:'내장 데이터',
-      tip:'SHEET_ID 를 채우면 구글 시트에서 자동으로 값을 읽어옵니다.' });
+    if(window.__boardFailed) window.__boardFailed('시트 주소를 확인하지 못했습니다');
     return;
   }
 
@@ -1442,15 +1334,18 @@ function bootBoard(){
   Promise.all(names.map(function(k){ return getTab(TABS[k]); })).then(function(res){
     var t={}; names.forEach(function(k,i){ t[k]=res[i]; });
     if(!names.some(function(k){ return t[k] && t[k].length; })){
-      render(FALLBACK, { ok:false, text:'내장 데이터',
-        tip:'시트를 읽지 못했습니다. 시트 공유 설정과 탭 이름을 확인해 주세요.' });
+      if(window.console && console.error){
+        console.error('[현황판] 모든 탭을 읽지 못했습니다. 위의 요청 주소를 브라우저 주소창에 붙여넣어 '
+          + '구글이 무엇을 돌려주는지 확인해 보세요.');
+      }
+      if(window.__boardFailed) window.__boardFailed('시트를 읽지 못했습니다. F12 콘솔에서 사유를 확인해 주세요');
       return;
     }
     var b=build(t);
     render(b.data, { ok:true, text:'시트 연동',
       tip:'읽어온 탭: '+b.used.join(', ') });
   }).catch(function(){
-    render(FALLBACK, { ok:false, text:'내장 데이터', tip:'시트 연결에 실패했습니다.' });
+    if(window.__boardFailed) window.__boardFailed('시트 연결에 실패했습니다');
   });
 }
 
@@ -1461,10 +1356,6 @@ function bootBoard(){
    ══════════════════════════════════════════════════════════════ */
 (function(){
   'use strict';
-  var SHA    = 'b0869a939599458b3959c832ada94bd9733421f25782d3b920f4c673deb9cb3d';
-  var SIMPLE = -1649614439;
-  /* 통과 기록을 남기지 않습니다. 새로고침하거나 다시 들어오면 매번 다시 묻습니다. */
-
   var gate=document.getElementById('gate');
   var pw=document.getElementById('gate-pw');
   var go=document.getElementById('gate-go');
@@ -1474,7 +1365,7 @@ function bootBoard(){
   var ghc=document.getElementById('gate-hcg');
   if(logo && ghc) ghc.src=logo.getAttribute('src');
 
-  /* 이전 버전에서 저장된 통과 기록이 있으면 지웁니다 */
+  /* 예전 버전에서 저장된 통과 기록이 있으면 지웁니다 */
   try{
     if(window.localStorage){
       var i, dead=[];
@@ -1486,45 +1377,69 @@ function bootBoard(){
     }
   }catch(e){}
 
+  function say(t, bad){
+    if(!msg) return;
+    msg.style.color = bad ? 'var(--over)' : 'var(--muted48)';
+    msg.textContent = t;
+  }
+  function lock(on){
+    if(go) go.disabled=on;
+    if(pw) pw.disabled=on;
+  }
+
   var started=false;
   function open_(){
     if(started) return; started=true;
-    if(msg){ msg.style.color='var(--muted48)'; msg.textContent='불러오는 중입니다'; }
-    if(go){ go.disabled=true; go.textContent='확인'; }
-    if(pw) pw.disabled=true;
+    say('불러오는 중입니다', false);
+    lock(true);
     bootBoard();   /* 렌더가 끝나면 render() 안에서 잠금 화면을 내립니다 */
   }
+  window.__boardFailed=function(t){
+    started=false; lock(false);
+    say(t || '데이터를 불러오지 못했습니다', true);
+    if(pw){ pw.value=''; }
+  };
 
-  function djb2(s){
-    var x=5381, i;
-    for(i=0;i<s.length;i++){ x=((x<<5)+x)+s.charCodeAt(i); x=x|0; }
-    return x;
+  function b64(s){
+    var bin=atob(s), a=new Uint8Array(bin.length), i;
+    for(i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i);
+    return a;
   }
-  function check(v){
-    if(window.crypto && crypto.subtle && crypto.subtle.digest && window.TextEncoder){
-      try{
-        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(v))
-          .then(function(buf){
-            var hex=Array.prototype.map.call(new Uint8Array(buf), function(b){
-              return ('0'+b.toString(16)).slice(-2); }).join('');
-            return hex===SHA;
-          }).catch(function(){ return djb2(v)===SIMPLE; });
-      }catch(e){}
+  /* 비밀번호로 키를 만들어 시트 ID 를 복호화합니다.
+     복호화가 되면 비밀번호가 맞은 것이고, 안 되면 틀린 것입니다. */
+  function unlock(v){
+    if(!(window.crypto && crypto.subtle && window.TextEncoder && window.TextDecoder)){
+      return Promise.reject('nocrypto');
     }
-    return Promise.resolve(djb2(v)===SIMPLE);
+    var enc=new TextEncoder();
+    return crypto.subtle.importKey('raw', enc.encode(v), 'PBKDF2', false, ['deriveKey'])
+      .then(function(base){
+        return crypto.subtle.deriveKey(
+          { name:'PBKDF2', salt:b64(SHEET_ENC.salt), iterations:SHEET_ENC.iter, hash:'SHA-256' },
+          base, { name:'AES-GCM', length:256 }, false, ['decrypt']);
+      })
+      .then(function(key){
+        return crypto.subtle.decrypt({ name:'AES-GCM', iv:b64(SHEET_ENC.iv) }, key, b64(SHEET_ENC.ct));
+      })
+      .then(function(buf){ return new TextDecoder().decode(buf); });
   }
 
   function submit(){
     var v=(pw && pw.value || '').trim();
     if(!v){ if(pw) pw.focus(); return; }
-    check(v).then(function(good){
-      if(good){
-        open_();
-      } else {
-        if(msg) msg.textContent='비밀번호가 맞지 않습니다.';
-        if(card){ card.className='gate-card'; void card.offsetWidth; card.className='gate-card bad'; }
-        if(pw){ pw.value=''; pw.focus(); }
+    lock(true); say('확인 중입니다', false);
+    unlock(v).then(function(id){
+      SHEET_ID = id;
+      open_();
+    }).catch(function(err){
+      lock(false);
+      if(err==='nocrypto'){
+        say('이 브라우저에서는 열 수 없습니다. https 주소로 접속해 주세요', true);
+        return;
       }
+      say('비밀번호가 맞지 않습니다', true);
+      if(card){ card.className='gate-card'; void card.offsetWidth; card.className='gate-card bad'; }
+      if(pw){ pw.value=''; pw.focus(); }
     });
   }
   if(go) go.addEventListener('click', submit);
