@@ -741,8 +741,12 @@ function render(DATA, srcLabel){
       var gs=DATA.pkg.filter(function(g){ return g.items.some(function(it){ return hit(it,m); }); })
                      .map(function(g){ return g.group; });
       var ds=DATA.dev.filter(function(it){ return hit(it,m); }).map(function(it){ return it.n; });
-      var isNow = curWeek>=m.ws && curWeek<=m.we;
-      var isPast = curWeek>m.we;
+      /* 주차가 아니라 달력의 월로 판정합니다.
+         (9월 3일은 5주차이지만 그 주가 8월 31일에 시작해 예전에는 8월 카드가 잡혔습니다) */
+      var cKey = weeks[m.ws-1].s.getFullYear()*12 + weeks[m.ws-1].s.getMonth();
+      var tKey = today.getFullYear()*12 + today.getMonth();
+      var isNow  = (cKey === tKey);
+      var isPast = (cKey <  tKey);
       var tag = isNow?'<span class="tag blue">이번 달</span>'
               : (isPast?'<span class="tag line">완료 구간</span>':'');
       var li=function(a,c){ return a.length
@@ -945,14 +949,8 @@ function render(DATA, srcLabel){
     };
 
     /* 기본값: 오늘 주차 */
-    /* 오늘 주차에 내용이 있으면 그 주차, 없으면 작성된 주차 중 가장 최근 것 */
-    var cw = curWeek>0 ? Math.min(curWeek, NW) : 1;
-    var def = cw;
-    if(!has(full[cw-1] || {})){
-      var back=written.filter(function(w){ return w.week<=cw; })
-                      .sort(function(a,b){ return b.week-a.week; });
-      if(back.length) def=back[0].week;
-    }
+    /* 언제나 오늘 주차를 엽니다 */
+    var def = curWeek>0 ? Math.min(curWeek, NW) : 1;
 
     /* 목록: 최신 주차부터, 착수 전은 맨 아래 */
     var picker=full.slice().sort(function(a,b){ return a.week-b.week; });
@@ -1174,6 +1172,14 @@ function bootBoard(){
     if(m) return m[3]+'-'+p2(m[1])+'-'+p2(m[2]);
     m=t.match(/^(\d{4})(\d{2})(\d{2})$/);                   /* 20260817 */
     if(m) return m[1]+'-'+m[2]+'-'+m[3];
+    /* 구글이 날짜를 일련번호로 내보내는 경우 (1899-12-30 기준 일수) */
+    if(/^\d{4,6}$/.test(t)){
+      var sn=+t;
+      if(sn>20000 && sn<80000){
+        var dd=new Date(Date.UTC(1899,11,30)+sn*86400000);
+        return dd.getUTCFullYear()+'-'+p2(dd.getUTCMonth()+1)+'-'+p2(dd.getUTCDate());
+      }
+    }
     return '';
   };
   var n=function(v,d){ var x=parseFloat(String(v).replace(/[^0-9.\-]/g,'')); return isNaN(x)?d:x; };
