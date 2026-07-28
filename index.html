@@ -192,6 +192,19 @@ a:hover{text-decoration:underline}
 .casesum .ct{flex:1}
 
 /* 모듈 진척 */
+/* 패키지 진척 단계 */
+.stp{display:inline-block;padding:4px 10px;border-radius:9999px;text-align:center;
+  font-style:normal;font-size:11px;font-weight:600;letter-spacing:-0.2px;white-space:nowrap}
+.stp.done{background:var(--primary);color:#fff}
+.stp.doing{background:#e8f1fc;color:var(--primary)}
+.stp.todo{background:transparent;border:1px solid var(--hairline);color:var(--muted48);font-weight:400}
+.stp.na{background:transparent;color:#c9c9ce;font-weight:400;padding:4px 6px}
+.mbar{height:8px;background:#e3e3e6;border-radius:4px;overflow:hidden;min-width:110px}
+.mbar i{display:block;height:100%;background:var(--primary);border-radius:4px}
+.mpct{font-size:14px;font-weight:600;letter-spacing:-0.4px;white-space:nowrap}
+.mpct.on{color:var(--primary)}
+.t td.ctr,.t th.ctr{text-align:center}
+
 /* 간트 범례 */
 .glg{display:flex;flex-wrap:wrap;gap:20px;padding-bottom:16px;margin-bottom:4px;
   border-bottom:1px solid var(--divider);font-size:12.5px;color:var(--muted48)}
@@ -340,7 +353,7 @@ table.t{width:100%;border-collapse:collapse;font-size:14px;min-width:700px}
    ════════════════════════════════════════════════════════════════ */
 const SHEET_ID = '1Oa8GCh0u1D16qrvNAKrLF1cFR2o_RXZZCpbCGWbTIi0';
 
-const TABS = { 설정:'설정', WBS:'WBS', 마일스톤:'마일스톤',
+const TABS = { 설정:'설정', WBS:'WBS', 패키지진척:'패키지진척', 마일스톤:'마일스톤',
                주간업무:'주간업무', 녹화본:'녹화본', 산출물:'산출물', 이슈:'이슈' };
 
 const FALLBACK = {
@@ -430,6 +443,20 @@ const FALLBACK = {
     { n:'설계',           s:6,  e:8,  st:'todo', memo:'설계서 리뷰 및 확정' },
     { n:'개발',           s:8,  e:20, st:'todo', memo:'단위개발 및 단위테스트' },
     { n:'리뷰 및 테스트', s:20, e:23, st:'todo', memo:'통합테스트 및 결함 조치' },
+  ],
+
+  // ── 패키지 진척 (모듈별 5단계) ──────────────────────────────
+  // 값: '완료' / '진행중' / '해당없음' / '' (미착수)
+  // 가중치는 모듈의 일정 범위(주 수)를 넣습니다. 범위가 큰 모듈이 더 크게 반영됩니다.
+  pkgSteps: [
+    { mod:'조직/인사',  w:4, steps:{ 업무분석:'완료', 교육:'완료',   셋업:'완료',   테스트:'완료',   마이그레이션:'완료' } },
+    { mod:'근태',      w:5, steps:{ 업무분석:'완료', 교육:'완료',   셋업:'진행중', 테스트:'',      마이그레이션:'' } },
+    { mod:'신청관리',   w:3, steps:{ 업무분석:'완료', 교육:'진행중', 셋업:'',      테스트:'',      마이그레이션:'해당없음' } },
+    { mod:'급여/퇴직금', w:4, steps:{ 업무분석:'완료', 교육:'',      셋업:'',      테스트:'',      마이그레이션:'' } },
+    { mod:'세무관리',   w:2, steps:{ 업무분석:'',    교육:'',      셋업:'',      테스트:'',      마이그레이션:'' } },
+    { mod:'평가',      w:3, steps:{ 업무분석:'',    교육:'',      셋업:'',      테스트:'',      마이그레이션:'' } },
+    { mod:'교육',      w:2, steps:{ 업무분석:'',    교육:'',      셋업:'',      테스트:'',      마이그레이션:'' } },
+    { mod:'시스템',     w:2, steps:{ 업무분석:'해당없음', 교육:'',  셋업:'',      테스트:'',      마이그레이션:'' } },
   ],
 
   // 주요 마일스톤. 날짜만 고치면 상단 칩과 '다음 마일스톤'이 자동 갱신됩니다.
@@ -599,6 +626,7 @@ const FALLBACK = {
 <nav class="tabs">
   <div class="wrap" role="tablist" aria-label="현황 보기">
     <button class="tab" role="tab" data-p="p-wbs"  aria-selected="true">WBS 일정</button>
+    <button class="tab" role="tab" data-p="p-pkg"  aria-selected="false">패키지 진척<b id="n-pkg"></b></button>
     <button class="tab" role="tab" data-p="p-week" aria-selected="false">주간 업무</button>
     <button class="tab" role="tab" data-p="p-dev"  aria-selected="false">추가개발</button>
     <button class="tab" role="tab" data-p="p-rec"  aria-selected="false">녹화본<b id="n-rec"></b></button>
@@ -623,6 +651,23 @@ const FALLBACK = {
     </div>
   </section>
 
+  <section class="panel" id="p-pkg" role="tabpanel" hidden>
+    <div class="ph" style="max-width:none"><h1>패키지 진척</h1>
+      <p class="sub">모듈마다 업무분석, 교육, 셋업, 테스트, 마이그레이션 다섯 단계를 거치며, 모든 단계가 끝나면 그 모듈이 완료되고 모듈 범위에 비례해 패키지 진척률이 올라갑니다.</p></div>
+    <div class="card">
+      <div class="ch"><h3>모듈별 단계 현황</h3><span class="m" id="pkg-m"></span></div>
+      <div class="cb">
+        <div class="glg" style="gap:22px">
+          <span><i class="stp done">완료</i></span>
+          <span><i class="stp doing">진행</i></span>
+          <span><i class="stp todo">미착수</i></span>
+          <span><i class="stp na">해당없음</i></span>
+        </div>
+        <div class="ts"><table class="t" id="pkgtbl"></table></div>
+      </div>
+    </div>
+  </section>
+
   <section class="panel" id="p-week" role="tabpanel" hidden>
     <div class="ph"><h1>주간 업무</h1>
       <p class="sub">매주 금요일 기준 금주 실적, 차주 계획, 요청사항입니다.</p></div>
@@ -636,7 +681,7 @@ const FALLBACK = {
   </section>
 
   <section class="panel" id="p-dev" role="tabpanel" hidden>
-    <div class="ph"><h1>추가개발</h1><p class="sub" id="dev-sub"></p></div>
+    <div class="ph"><h1>추가개발</h1></div>
     <div class="card"><div class="ch"><h3>단계별 진척</h3><span class="m" id="dev-m"></span></div>
       <div class="cb"><div class="ts"><table class="t" id="dev-phase"></table></div></div></div>
     <div class="card"><div class="ch"><h3>요건 대장</h3><span class="m" id="dev-im"></span></div>
@@ -698,7 +743,29 @@ function render(DATA, srcLabel){
   function prog(a){ var n=0,t=0; a.forEach(function(i){ var w=span(i); t+=w; n+=w*WT[i.st]; }); return t?n/t:0; }
 
   var pkgItems=[]; DATA.pkg.forEach(function(g){ pkgItems=pkgItems.concat(g.items); });
-  var pPkg=(typeof DATA.pctPkg==='number') ? DATA.pctPkg : prog(pkgItems);
+  /* 모듈별 단계 완료 상태로 패키지 진척을 계산합니다 */
+  var STEPS=['업무분석','교육','셋업','테스트','마이그레이션'];
+  function stepPct(p){
+    var den=0, num=0;
+    for(var i=0;i<STEPS.length;i++){
+      var v=p.steps[STEPS[i]];
+      if(v==='해당없음' || v==='없음' || v==='-') continue;
+      den++;
+      if(v==='완료') num+=1;
+      else if(v==='진행중' || v==='진행') num+=0.5;
+    }
+    return den ? num/den : 1;
+  }
+  var stepsPct=null;
+  if(DATA.pkgSteps && DATA.pkgSteps.length){
+    var ws=0, ac=0;
+    DATA.pkgSteps.forEach(function(p){
+      var w=(p.w>0?p.w:1); ws+=w; ac+=w*stepPct(p);
+    });
+    if(ws) stepsPct=ac/ws;
+  }
+  var pPkg=(typeof DATA.pctPkg==='number') ? DATA.pctPkg
+         : (stepsPct!==null ? stepsPct : prog(pkgItems));
   var pDev=(typeof DATA.devPct==='number') ? DATA.devPct : prog(DATA.dev);
   var pAll=(typeof DATA.pctAll==='number') ? DATA.pctAll
          : (pPkg*DATA.weights.pkg+pDev*DATA.weights.dev);
@@ -713,7 +780,7 @@ function render(DATA, srcLabel){
   if($('proj-name')) $('proj-name').textContent=P.name;
   if($('foot-l'))    $('foot-l').textContent=P.vendor+' / '+P.name;
   try{ document.title=P.name+' / 프로젝트 현황'; }catch(e){}
-  $('sub').textContent=P.vendor+' 수행 / '+P.solution+' / 전체 '+NW+'주';
+  $('sub').textContent=P.vendor+' / '+P.solution+' / 전체 '+NW+'주';
   $('specs').innerHTML=[
     ['수행 기간', ymd(START)+' - '+ymd(END)],
     ['현재 주차', curWeek?curWeek+' / '+NW+'주':'착수 전'],
@@ -912,6 +979,38 @@ function render(DATA, srcLabel){
     } else if(jb){ jb.style.display='none'; }
   })();
 
+  /* 패키지 진척 */
+  (function(){
+    var el=$('pkgtbl'); if(!el) return;
+    var L=DATA.pkgSteps||[];
+    if(!L.length){
+      el.innerHTML='<tbody><tr><td class="empty">시트의 <code>패키지진척</code> 탭에 모듈과 단계를 입력하면 여기에 표시됩니다.</td></tr></tbody>';
+      $('pkg-m').textContent='등록 전';
+      $('n-pkg').textContent='';
+      return;
+    }
+    var cell=function(v){
+      if(v==='완료') return '<span class="stp done">완료</span>';
+      if(v==='진행중'||v==='진행') return '<span class="stp doing">진행</span>';
+      if(v==='해당없음'||v==='없음'||v==='-') return '<span class="stp na">해당없음</span>';
+      return '<span class="stp todo">미착수</span>';
+    };
+    var doneMods=0;
+    var body=L.map(function(p){
+      var v=stepPct(p); if(v>=1) doneMods++;
+      return '<tr><td><b>'+p.mod+'</b></td>'
+        +'<td class="r mn">'+(p.w>0?p.w:1)+'</td>'
+        +STEPS.map(function(k){ return '<td class="ctr">'+cell(p.steps[k])+'</td>'; }).join('')
+        +'<td style="width:22%"><div class="mbar"><i style="width:'+pc(v)+'%"></i></div></td>'
+        +'<td class="r"><span class="mpct'+(v>0?' on':'')+'">'+pc(v)+'%</span></td></tr>';
+    }).join('');
+    el.innerHTML='<thead><tr><th>모듈</th><th class="r">가중치</th>'
+      +STEPS.map(function(k){ return '<th class="ctr">'+k+'</th>'; }).join('')
+      +'<th>진척</th><th class="r">달성률</th></tr></thead><tbody>'+body+'</tbody>';
+    $('pkg-m').textContent=doneMods+' / '+L.length+'개 모듈 완료';
+    $('n-pkg').textContent=doneMods+'/'+L.length;
+  })();
+
   /* 주간 업무 */
   (function(){
     var src=(DATA.weekly||[]).slice();
@@ -977,8 +1076,6 @@ function render(DATA, srcLabel){
   })();
 
   /* 추가개발 */
-  $('dev-sub').textContent='실개발과 예비공수를 합쳐 총 '+P.devMD+' M/D, 공수가 책정된 요건 '+P.devCount
-    +'건입니다. 2.5~3명 병렬 투입 기준으로 일정을 잡았습니다.';
   $('dev-m').textContent='진척률 '+pc(pDev)+'%';
   $('dev-phase').innerHTML='<thead><tr><th>단계</th><th>기간</th><th>주차</th><th>상태</th><th>비고</th></tr></thead><tbody>'
     +DATA.dev.map(function(it){
@@ -1264,6 +1361,18 @@ function bootBoard(){
       if(devSpan) D.devSpan=devSpan;
       if(devPct!==null && devPct!==undefined) D.devPct=devPct;
       used.push('WBS');
+    }
+
+    if(t['패키지진척'] && t['패키지진척'].length){
+      var STEPS=['업무분석','교육','셋업','테스트','마이그레이션'];
+      var ps=t['패키지진척'].map(function(r){
+        var mod=String(r['모듈']||'').trim();
+        if(!mod) return null;
+        var sv={};
+        STEPS.forEach(function(k){ sv[k]=String(r[k]||'').trim(); });
+        return { mod:mod, w:n(r['가중치'],1), steps:sv };
+      }).filter(Boolean);
+      if(ps.length){ D.pkgSteps=ps; used.push('패키지진척'); }
     }
 
     if(t['마일스톤'] && t['마일스톤'].length){
