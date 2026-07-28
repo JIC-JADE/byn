@@ -1073,10 +1073,17 @@ function render(DATA, srcLabel){
       t.setAttribute('aria-selected',on?'true':'false');
       var el=$(t.getAttribute('data-p')); if(el) el.hidden=!on;
     });
-    if(history.replaceState) history.replaceState(null,'','#'+id);
+    /* 주소에 탭을 남기지 않습니다. 새로고침하면 항상 WBS 일정으로 시작합니다. */
   }
   tabs.forEach(function(t){ t.addEventListener('click',function(){ show(t.getAttribute('data-p')); }); });
-  if(location.hash && $(location.hash.slice(1))) show(location.hash.slice(1));
+
+  /* 이전 버전이 주소에 남긴 #탭 표시가 있으면 지웁니다 */
+  try{
+    if(location.hash && history.replaceState){
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+  }catch(e){}
+  show('p-wbs');
 
   if(window.console && console.info){ console.info('[현황판] '+srcLabel.text+(srcLabel.tip?' — '+srcLabel.tip:'')); }
 
