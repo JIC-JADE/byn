@@ -345,7 +345,6 @@ const TABS = { 설정:'설정', WBS:'WBS', 마일스톤:'마일스톤',
 
 const FALLBACK = {
 
-
   project: {
     name:'JaDE 인사시스템 구축', client:'BYN', vendor:'휴먼컨설팅그룹',
     solution:'JaDE HR Package',
@@ -1115,7 +1114,7 @@ function bootBoard(){
 
   function csvUrl(tab){
     return 'https://docs.google.com/spreadsheets/d/'+SHEET_ID
-      +'/gviz/tq?tqx=out:csv&sheet='+encodeURIComponent(tab)+'&_='+Date.now();
+      +'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(tab)+'&_='+Date.now();
   }
 
   function parseCSV(t){
@@ -1137,7 +1136,9 @@ function bootBoard(){
 
   function objectify(rows){
     if(!rows.length) return [];
-    var head=rows[0].map(function(x){ return String(x).trim(); });
+    var head=rows[0].map(function(x){
+      return String(x==null?'':x).replace(/^\uFEFF/,'').replace(/\u200B/g,'').trim();
+    });
     return rows.slice(1).filter(function(r){
       return r.some(function(c){ return String(c).trim()!==''; });
     }).map(function(r){
@@ -1182,27 +1183,37 @@ function bootBoard(){
     var used=[];
 
     if(t['설정'] && t['설정'].length){
-      var cfg={}; t['설정'].forEach(function(r){ cfg[r['항목']]=r['값']; });
+      /* 항목명은 공백과 밑줄을 무시하고 맞춥니다 */
+      var K=function(s){ return String(s==null?'':s).replace(/[\s_]/g,''); };
+      var cfg={};
+      t['설정'].forEach(function(r){
+        var key=K(r['항목']!==undefined ? r['항목'] : r[Object.keys(r)[0]]);
+        if(key) cfg[key]=(r['값']!==undefined ? r['값'] : r[Object.keys(r)[1]]);
+      });
+      var C=function(name){ return cfg[K(name)]; };
+      if(!Object.keys(cfg).length && window.console && console.warn){
+        console.warn('[현황판] 설정 탭을 읽었지만 항목명을 찾지 못했습니다. 1행 머리글이 항목 / 값 인지 확인하세요.');
+      }
       var P=D.project;
-      if(cfg['프로젝트명']) P.name=cfg['프로젝트명'];
-      if(cfg['수행사'])     P.vendor=cfg['수행사'];
-      if(cfg['솔루션'])     P.solution=cfg['솔루션'];
-      if(nd(cfg['시작일'])) P.start=nd(cfg['시작일']);
-      if(nd(cfg['종료일'])) P.end=nd(cfg['종료일']);
-      if(nd(cfg['오픈일'])) P.openDate=nd(cfg['오픈일']);
-      if(cfg['추가개발MD'])   P.devMD=n(cfg['추가개발MD'],P.devMD);
-      if(cfg['추가개발건수']) P.devCount=n(cfg['추가개발건수'],P.devCount);
-      if(cfg['가중치_패키지'])   D.weights.pkg=n(cfg['가중치_패키지'],D.weights.pkg);
-      if(cfg['가중치_추가개발']) D.weights.dev=n(cfg['가중치_추가개발'],D.weights.dev);
-      D.previewDate = nd(cfg['미리보기기준일']) || null;
-      if(cfg['이슈요약']) D.issueSummary=cfg['이슈요약'];
+      if(C('프로젝트명')) P.name=C('프로젝트명');
+      if(C('수행사'))     P.vendor=C('수행사');
+      if(C('솔루션'))     P.solution=C('솔루션');
+      if(nd(C('시작일'))) P.start=nd(C('시작일'));
+      if(nd(C('종료일'))) P.end=nd(C('종료일'));
+      if(nd(C('오픈일'))) P.openDate=nd(C('오픈일'));
+      if(C('추가개발MD'))   P.devMD=n(C('추가개발MD'),P.devMD);
+      if(C('추가개발건수')) P.devCount=n(C('추가개발건수'),P.devCount);
+      if(C('가중치_패키지'))   D.weights.pkg=n(C('가중치_패키지'),D.weights.pkg);
+      if(C('가중치_추가개발')) D.weights.dev=n(C('가중치_추가개발'),D.weights.dev);
+      D.previewDate = nd(C('미리보기기준일')) || null;
+      if(C('이슈요약')) D.issueSummary=C('이슈요약');
       var pctCfg=function(v){
         var x=String(v==null?'':v).replace('%','').trim();
         if(x==='') return null;
         var f=parseFloat(x); if(isNaN(f)) return null;
         return Math.max(0, Math.min(1, f>1 ? f/100 : f));
       };
-      var a1=pctCfg(cfg['진척률_전체']), a2=pctCfg(cfg['진척률_패키지']), a3=pctCfg(cfg['진척률_추가개발']);
+      var a1=pctCfg(C('진척률_전체')), a2=pctCfg(C('진척률_패키지')), a3=pctCfg(C('진척률_추가개발'));
       if(a1!==null) D.pctAll=a1;
       if(a2!==null) D.pctPkg=a2;
       if(a3!==null) D.devPct=a3;
