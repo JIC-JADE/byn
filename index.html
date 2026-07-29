@@ -547,7 +547,7 @@ const FALLBACK = {
 
   <section class="panel" id="p-pkg" role="tabpanel" hidden>
     <div class="ph" style="max-width:none"><h1>패키지 진척</h1>
-      <p class="sub">모듈마다 업무분석, 교육, 셋업, 테스트, 마이그레이션 다섯 단계를 거치며, 모든 단계가 끝나면 그 모듈이 완료되고 모듈 범위에 비례해 패키지 진척률이 올라갑니다.</p></div>
+      <p class="sub">모듈마다 업무분석, 기초셋업, 교육, 최종셋업, 테스트, 검수 여섯 단계를 거칩니다. 완료된 단계만 진척으로 계산하며, 해당없음은 그 모듈의 단계 수에서 제외됩니다.</p></div>
     <div class="card">
       <div class="ch"><h3>모듈별 단계 현황</h3><span class="m" id="pkg-m"></span></div>
       <div class="cb">
@@ -632,21 +632,22 @@ function render(DATA, srcLabel){
   var curWeek = today<START ? 0 : Math.min(NW, Math.floor((today-START)/(7*DAY))+1);
   var gotoWeek = null;   /* 간트 렌더 후 채워집니다 */
 
-  var WT={done:1,doing:.5,todo:0};
+  var WT={done:1,doing:0,todo:0};   /* 완료만 진척으로 셉니다 */
   var span=function(i){ return i.e-i.s+1; };
   function prog(a){ var n=0,t=0; a.forEach(function(i){ var w=span(i); t+=w; n+=w*WT[i.st]; }); return t?n/t:0; }
 
   var pkgItems=[]; DATA.pkg.forEach(function(g){ pkgItems=pkgItems.concat(g.items); });
   /* 모듈별 단계 완료 상태로 패키지 진척을 계산합니다 */
-  var STEPS=['업무분석','교육','셋업','테스트','마이그레이션'];
+  var STEPS=['업무분석','기초셋업','교육','최종셋업','테스트','검수'];
   function stepPct(p){
+    /* 해당없음은 분모에서 빼고, 완료만 진척으로 셉니다.
+       진행중과 미착수는 0입니다. */
     var den=0, num=0;
     for(var i=0;i<STEPS.length;i++){
       var v=p.steps[STEPS[i]];
       if(v==='해당없음' || v==='없음' || v==='-') continue;
       den++;
       if(v==='완료') num+=1;
-      else if(v==='진행중' || v==='진행') num+=0.5;
     }
     return den ? num/den : 1;
   }
@@ -1282,7 +1283,7 @@ function bootBoard(){
     }
 
     if(t['패키지진척'] && t['패키지진척'].length){
-      var STEPS=['업무분석','교육','셋업','테스트','마이그레이션'];
+      var STEPS=['업무분석','기초셋업','교육','최종셋업','테스트','검수'];
       var ps=t['패키지진척'].map(function(r){
         var mod=String(r['모듈']||'').trim();
         if(!mod) return null;
